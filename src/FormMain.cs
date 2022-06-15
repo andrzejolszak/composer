@@ -1,6 +1,11 @@
 ﻿using System.Windows.Forms;
 using System.Collections.Generic;
 using System;
+using NAudioWpfDemo.DrumMachineDemo;
+using NAudio.Wave;
+using System.Threading;
+using System.Linq;
+using Composer.Project;
 
 namespace Composer
 {
@@ -72,49 +77,25 @@ namespace Composer
         }
 
 
-        private void RunAudioThread(object jobObj)
+        private void RunAudioThread()
         {
-            var job = (AudioOut.Job)jobObj;
-
-            using (var audioOut = new NAudio.Wave.WaveOut())
+            using (var audioOut = new WaveOut())
             {
-                var audioBuffer = new NAudio.Wave.BufferedWaveProvider(new NAudio.Wave.WaveFormat());
-
-                audioOut.DesiredLatency = 100;
-                audioOut.Init(audioBuffer);
-                audioOut.Play();
-
-                var bufferSize = 5000;
-                var sampleBuffer = new float[bufferSize];
-                var byteBuffer = new byte[bufferSize * 4];
-                while (true)
+                DrumPattern pattern = new DrumPattern(new[] { "a", "b", "c", "d" }, 16);
+                int c = 0;
+                foreach(PitchedNote note in (this.currentProject.tracks.First() as TrackPitchedNotes).notes)
                 {
-                    while (audioBuffer.BufferedBytes < bufferSize * 2)
-                    {
-                        for (var i = 0; i < sampleBuffer.Length; i++)
-                            sampleBuffer[i] = 0;
-
-                        var sampleNum = job.GetNextSamples(sampleBuffer);
-                        if (sampleNum == 0)
-                            goto end;
-
-                        for (var i = 0; i < sampleNum; i++)
-                        {
-                            var sampleU = unchecked((ushort)(short)(sampleBuffer[i] * 0x4000));
-
-                            byteBuffer[i * 4 + 0] = (byte)((sampleU >> 0) & 0xff);
-                            byteBuffer[i * 4 + 1] = (byte)((sampleU >> 8) & 0xff);
-                            byteBuffer[i * 4 + 2] = (byte)((sampleU >> 0) & 0xff);
-                            byteBuffer[i * 4 + 3] = (byte)((sampleU >> 8) & 0xff);
-                        }
-
-                        audioBuffer.AddSamples(byteBuffer, 0, sampleNum * 4);
-                    }
-
-                    System.Threading.Thread.Sleep(50);
+                    pattern[(int)note.pitch.Frequency % 4, c++] = 1;
                 }
 
-            end:
+                DrumPatternSampleProvider patternSequencer = new DrumPatternSampleProvider(pattern);
+                patternSequencer.Tempo = 120;
+
+                audioOut.DesiredLatency = 100;
+                audioOut.Init(patternSequencer);
+                audioOut.Play();
+
+                Thread.Sleep(1000);
                 audioOut.Stop();
             }
 
@@ -123,10 +104,10 @@ namespace Composer
         }
 
 
-        public void ExecuteAudioJob(AudioOut.Job job)
+        public void ExecuteAudioJob()
         {
-            var newThread = new System.Threading.Thread(RunAudioThread);
-            newThread.Start(job);
+            var newThread = new Thread(RunAudioThread);
+            newThread.Start();
 
             lock (this.audioThreads)
                 this.audioThreads.Add(newThread);
@@ -216,6 +197,10 @@ namespace Composer
                 this.editorControl.Refresh();
                 return true;
             }
+            else if (keyData == Keys.Space)
+            {
+                this.ExecuteAudioJob();
+            }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
@@ -240,8 +225,6 @@ namespace Composer
             this.editor.SetCursorVisible(true);
 
             this.editorControl.Refresh();
-
-            this.ExecuteAudioJob(new AudioOut.JobNotePreview(pitch.Frequency));
         }
     }
 }
