@@ -1,11 +1,11 @@
 ﻿using System.Windows.Forms;
 using System.Collections.Generic;
 using System;
-using NAudioWpfDemo.DrumMachineDemo;
 using NAudio.Wave;
 using System.Threading;
 using System.Linq;
 using Composer.Project;
+using Composer.AudioOut;
 
 namespace Composer
 {
@@ -14,9 +14,6 @@ namespace Composer
         public Project.Project currentProject;
         public Editor.ControlEditor editorControl;
         public Editor.ViewManager editor;
-
-        public List<System.Threading.Thread> audioThreads = new List<System.Threading.Thread>();
-
 
         public FormMain(Project.Project project)
         {
@@ -67,50 +64,26 @@ namespace Composer
 
         protected override void OnClosed(EventArgs e)
         {
-            lock (this.audioThreads)
-            {
-                foreach (var thread in this.audioThreads)
-                    thread.Abort();
-
-                this.audioThreads.Clear();
-            }
-        }
-
-
-        private void RunAudioThread()
-        {
-            using (var audioOut = new WaveOut())
-            {
-                DrumPattern pattern = new DrumPattern(new[] { "a", "b", "c", "d" }, 16);
-                int c = 0;
-                foreach(PitchedNote note in (this.currentProject.tracks.First() as TrackPitchedNotes).notes)
-                {
-                    pattern[(int)note.pitch.Frequency % 4, c++] = 1;
-                }
-
-                DrumPatternSampleProvider patternSequencer = new DrumPatternSampleProvider(pattern);
-                patternSequencer.Tempo = 120;
-
-                audioOut.DesiredLatency = 100;
-                audioOut.Init(patternSequencer);
-                audioOut.Play();
-
-                Thread.Sleep(1000);
-                audioOut.Stop();
-            }
-
-            lock (audioThreads)
-                audioThreads.Remove(System.Threading.Thread.CurrentThread);
         }
 
 
         public void ExecuteAudioJob()
         {
-            var newThread = new Thread(RunAudioThread);
-            newThread.Start();
+            WaveOut audioOut = new WaveOut();
+            NotePattern pattern = new NotePattern(new[] { "b", "c", "d", "ds", "g" }, 16);
+            int c = 0;
+            foreach (PitchedNote note in (this.currentProject.tracks.First() as TrackPitchedNotes).notes)
+            {
+                pattern[(int)note.pitch.Frequency % pattern.Notes, c % pattern.Steps] = 1;
+                c++;
+            }
 
-            lock (this.audioThreads)
-                this.audioThreads.Add(newThread);
+            NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false);
+            patternSequencer.Tempo = 90;
+
+            audioOut.Init(patternSequencer);
+            audioOut.PlaybackStopped += (s, e) => audioOut.Dispose();
+            audioOut.Play();
         }
 
 

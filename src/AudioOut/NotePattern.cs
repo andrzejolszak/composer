@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NAudioWpfDemo.DrumMachineDemo
+namespace Composer.AudioOut
 {
-    public class DrumPattern
+    public class NotePattern
     {
         private readonly byte[,] hits;
         private readonly List<string> noteNames;
         
-        public DrumPattern(IEnumerable<string> notes, int steps)
+        public NotePattern(IEnumerable<string> notes, int steps)
         {
             noteNames = new List<string>(notes);
             Steps = steps;

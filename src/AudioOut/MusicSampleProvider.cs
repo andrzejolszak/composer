@@ -2,7 +2,7 @@
 using System.Linq;
 using NAudio.Wave;
 
-namespace NAudioWpfDemo.DrumMachineDemo
+namespace Composer.AudioOut
 {
     class MusicSampleProvider : ISampleProvider
     {

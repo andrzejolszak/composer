@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using NAudio.Wave;
 
-namespace NAudioWpfDemo.DrumMachineDemo
+namespace Composer.AudioOut
 {
     class PatternSequencer
     {
-        private readonly DrumPattern drumPattern;
-        private readonly DrumKit drumKit;
+        private readonly NotePattern drumPattern;
+        private readonly SampleKit drumKit;
         private int tempo;
         private int samplesPerStep;
 
-        public PatternSequencer(DrumPattern drumPattern, DrumKit kit)
+        public PatternSequencer(NotePattern drumPattern, SampleKit kit)
         {
             drumKit = kit;
             this.drumPattern = drumPattern;
             Tempo = 120;
         }
+
+        public bool Loop { get; set; }
 
         public int Tempo
         {
@@ -36,9 +39,9 @@ namespace NAudioWpfDemo.DrumMachineDemo
         private int currentStep;
         private double patternPosition;
 
-        public IList<MusicSampleProvider> GetNextMixerInputs(int sampleCount)
+        public IList<ISampleProvider> GetNextMixerInputs(int sampleCount)
         {
-            List<MusicSampleProvider> mixerInputs = new List<MusicSampleProvider>();
+            List<ISampleProvider> mixerInputs = new List<ISampleProvider>();
             int samplePos = 0;
             if (newTempo)
             {
@@ -72,14 +75,21 @@ namespace NAudioWpfDemo.DrumMachineDemo
 
                 samplePos += samplesPerStep;
                 currentStep++;
+                if (!this.Loop && currentStep >= drumPattern.Steps)
+                {
+                    break;
+                }
+
                 currentStep = currentStep % drumPattern.Steps;
 
             }
+
             patternPosition += ((double)sampleCount / samplesPerStep);
             if (patternPosition > drumPattern.Steps)
             {
                 patternPosition -= drumPattern.Steps;
             }
+
             return mixerInputs;
         }
     }

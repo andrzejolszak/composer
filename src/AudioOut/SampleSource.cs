@@ -1,7 +1,7 @@
 ﻿using System;
 using NAudio.Wave;
 
-namespace NAudioWpfDemo.DrumMachineDemo
+namespace Composer.AudioOut
 {
     class SampleSource
     {

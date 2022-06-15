@@ -77,9 +77,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioOut\DrumKit.cs" />
-    <Compile Include="AudioOut\DrumPattern.cs" />
-    <Compile Include="AudioOut\DrumPatternSampleProvider.cs" />
+    <Compile Include="AudioOut\SampleKit.cs" />
+    <Compile Include="AudioOut\NotePattern.cs" />
+    <Compile Include="AudioOut\NotePatternSampleProvider.cs" />
     <Compile Include="AudioOut\MusicSampleProvider.cs" />
     <Compile Include="AudioOut\PatternSequencer.cs" />
     <Compile Include="AudioOut\SampleSource.cs" />
@@ -161,7 +161,23 @@
     <Content Include="AudioOut\Drums\snare-trimmed.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="AudioOut\Guitar1\b.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\Guitar1\c.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\Guitar1\d.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\Guitar1\ds.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AudioOut\Guitar1\g.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

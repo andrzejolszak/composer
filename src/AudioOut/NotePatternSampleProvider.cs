@@ -1,18 +1,19 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-namespace NAudioWpfDemo.DrumMachineDemo
+namespace Composer.AudioOut
 {
-    class DrumPatternSampleProvider : ISampleProvider
+    class NotePatternSampleProvider : ISampleProvider
     {
         private readonly MixingSampleProvider mixer;
         private readonly WaveFormat waveFormat;
         private readonly PatternSequencer sequencer;
 
-        public DrumPatternSampleProvider(DrumPattern pattern)
+        public NotePatternSampleProvider(NotePattern pattern, bool loop)
         {
-            var kit = new DrumKit();
+            var kit = new SampleKit(pattern);
             sequencer = new PatternSequencer(pattern, kit);
+            sequencer.Loop = loop;
             waveFormat = kit.WaveFormat;
             mixer = new MixingSampleProvider(waveFormat);
         }
