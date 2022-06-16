@@ -41,9 +41,9 @@ namespace Composer.Editor
         }
 
 
-        public override Util.Pitch GetPitchAtPosition(float y)
+        public override int GetStringAtPosition(float y)
         {
-            return Util.Pitch.FromMidiPitch(0);
+            return 0;
         }
 
 

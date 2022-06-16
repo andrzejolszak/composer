@@ -2,7 +2,7 @@
 {
     public class PitchedNote
     {
-        public Util.Pitch pitch;
+        public int StringNo;
         public Util.TimeRange timeRange;
     }
 }

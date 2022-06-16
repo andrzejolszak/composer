@@ -26,7 +26,7 @@ namespace Composer.Editor
         float mouseDragOriginX, mouseDragOriginY;
         float timeDragOrigin;
         int trackDragOrigin;
-        Util.Pitch pitchDragOrigin;
+        int pitchDragOrigin;
 
         public bool cursorVisible;
         public float cursorTime1, cursorTime2;
@@ -460,7 +460,7 @@ namespace Composer.Editor
 
                 this.pitchDragOrigin =
                     this.GetTrackSegmentAtPosition(this.mouseDragOriginX, this.mouseDragOriginY).
-                    GetPitchAtPosition(this.mouseDragOriginY);
+                    GetStringAtPosition(this.mouseDragOriginY);
                 
                 if (this.currentHoverRegion != null && this.currentHoverRegion.isolated)
                 {
@@ -746,10 +746,10 @@ namespace Composer.Editor
             {
                 var pitchAtMouse =
                     this.GetTrackSegmentAtPosition(this.mouseCurrentX, this.mouseCurrentY)
-                    .GetPitchAtPosition(this.mouseCurrentY);
+                    .GetStringAtPosition(this.mouseCurrentY);
 
-                var offset = pitchAtMouse.MidiPitch - this.pitchDragOrigin.MidiPitch;
-                return (float)System.Math.Round(offset);
+                var offset = - pitchAtMouse + this.pitchDragOrigin;
+                return (float)offset;
             }
         }
     }

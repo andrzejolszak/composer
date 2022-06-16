@@ -8,19 +8,10 @@
 
     public static class RelativePitchData
     { 
-        public static RelativePitch MakeFromPitch(Util.Pitch pitch)
+
+        public static int GetString(this RelativePitch relativePitch, int octave)
         {
-            var midiPitch = ((pitch.MidiPitch % 12f) + 12) % 12f;
-            if (midiPitch % 1f != 0)
-                return RelativePitch.None;
-
-            return (RelativePitch)(int)midiPitch;
-        }
-
-
-        public static Util.Pitch GetPitch(this RelativePitch relativePitch, int octave)
-        {
-            return Util.Pitch.FromMidiPitch((int)relativePitch + 12 * octave);
+            return ((int)relativePitch + 12 * octave) % 6;
         }
 
 

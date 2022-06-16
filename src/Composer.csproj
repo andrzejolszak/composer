@@ -116,7 +116,6 @@
     <Compile Include="Util\Meter.cs" />
     <Compile Include="Util\RelativePitch.cs" />
     <Compile Include="Util\Rect.cs" />
-    <Compile Include="Util\Pitch.cs" />
     <Compile Include="Util\Scale.cs" />
     <Compile Include="Util\TimeRange.cs" />
     <Compile Include="Util\TimeRangeSortedList.cs" />

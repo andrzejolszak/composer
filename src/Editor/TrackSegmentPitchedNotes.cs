@@ -6,7 +6,6 @@ namespace Composer.Editor
 {
     class TrackSegmentPitchedNotes : TrackSegment
     {
-        public Util.Pitch minPitch, maxPitch;
         public List<Project.TrackPitchedNotes> projectTracks;
 
         const float LAYOUT_MARGIN = 4;
@@ -24,25 +23,7 @@ namespace Composer.Editor
 
         public override void RefreshLayout(float x, float y)
         {
-            this.minPitch = Util.Pitch.FromMidiPitch(60);
-            this.maxPitch = Util.Pitch.FromMidiPitch(71);
-
-            // Find minimum and maximum note pitches in the segment's time range.
-            foreach (var track in this.projectTracks)
-            {
-                foreach (var note in track.notes.EnumerateOverlappingRange(this.row.timeRange))
-                {
-                    var noteOctave = (int)(note.pitch.MidiPitch / 12);
-
-                    if (12 * noteOctave < this.minPitch.MidiPitch)
-                        this.minPitch.MidiPitch = 12 * noteOctave;
-
-                    if (12 * noteOctave + 11 > this.maxPitch.MidiPitch)
-                        this.maxPitch.MidiPitch = 12 * noteOctave + 11;
-                }
-            }
-
-            var pitchRange = (this.maxPitch.MidiPitch - this.minPitch.MidiPitch + 1);
+            var pitchRange = 6;
 
             this.layoutRect = new Util.Rect(
                 x,
@@ -64,12 +45,9 @@ namespace Composer.Editor
         }
 
 
-        public override Util.Pitch GetPitchAtPosition(float y)
+        public override int GetStringAtPosition(float y)
         {
-            return Util.Pitch.FromMidiPitch(
-                System.Math.Max(this.minPitch.MidiPitch,
-                System.Math.Min(this.maxPitch.MidiPitch,
-                    this.minPitch.MidiPitch + (this.contentRect.yMax - y) / this.manager.PitchedNoteHeight)));
+            return 6 - (int)((this.contentRect.yMax - y) / this.manager.PitchedNoteHeight);
         }
 
 
@@ -134,38 +112,26 @@ namespace Composer.Editor
                         (this.contentRect.xMin + (keyEndTime - this.row.timeRange.Start) *
                         this.manager.TimeToPixelsMultiplier);
 
-                    for (var p = this.minPitch.MidiPitch; p <= this.maxPitch.MidiPitch; p++)
+                    for (var p = 0; p <= 5; p++)
                     {
-                        var pitch = Util.Pitch.FromMidiPitch(p);
-                        var relativePitch = Util.RelativePitchData.MakeFromPitch(pitch);
-
                         var isTonicPitch =
-                            keyChange != null &&
-                            relativePitch == keyChange.key.tonicPitch;
+                            keyChange != null;
 
                         var y = (int)
-                            (this.contentRect.yMax - (p - this.minPitch.MidiPitch) *
+                            (this.contentRect.yMax - (p - 0) *
                             this.manager.PitchedNoteHeight);
 
                         g.DrawLine(isTonicPitch ? Pens.Gray : Pens.LightGray,
                             keyStartX, y,
                             keyEndX, y);
 
-                        var octave = (int)(pitch.MidiPitch / 12);
-
-                        if (keyChange == null || keyChange.key.HasPitch(relativePitch))
+                        if (true)
                         {
                             g.DrawString(
-                                Util.RelativePitchData.GetSimpleName(relativePitch),
+                                Util.RelativePitchData.GetSimpleName((Util.RelativePitch)p),
                                 font,
                                 Brushes.MediumVioletRed,
                                 keyStartX + 3, y - this.manager.PitchedNoteHeight);
-
-                            g.DrawString(
-                                octave.ToString(),
-                                font,
-                                Brushes.MediumVioletRed,
-                                keyStartX + 15, y - this.manager.PitchedNoteHeight);
                         }
                     }
                 }

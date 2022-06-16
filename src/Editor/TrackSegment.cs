@@ -22,7 +22,7 @@ namespace Composer.Editor
 
         public abstract float GetTimeAtPosition(float x);
 
-        public abstract Util.Pitch GetPitchAtPosition(float y);
+        public abstract int GetStringAtPosition(float y);
 
         public abstract void Draw(Graphics g);
     }

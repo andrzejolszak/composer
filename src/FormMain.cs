@@ -74,7 +74,7 @@ namespace Composer
             int c = 0;
             foreach (PitchedNote note in (this.currentProject.tracks.First() as TrackPitchedNotes).notes)
             {
-                pattern[(int)note.pitch.Frequency % pattern.Notes, c % pattern.Steps] = 1;
+                pattern[note.StringNo % pattern.Notes, c % pattern.Steps] = 1;
                 c++;
             }
 
@@ -119,7 +119,7 @@ namespace Composer
                     if (keyData == Keys.J) relativePitch = Util.RelativePitch.As;
                     if (keyData == Keys.M) relativePitch = Util.RelativePitch.B;
 
-                    var pitch = Util.RelativePitchData.GetPitch(relativePitch, 5);
+                    var pitch = Util.RelativePitchData.GetString(relativePitch, 5);
                     this.InsertPitchedNote(trackIndex, time, 960 / 4, pitch);
                 }
 
@@ -179,13 +179,13 @@ namespace Composer
         }
 
 
-        private void InsertPitchedNote(int trackIndex, float time, float duration, Util.Pitch pitch)
+        private void InsertPitchedNote(int trackIndex, float time, float duration, int stringNo)
         {
             this.editor.UnselectAll();
 
             var note = new Project.PitchedNote
             {
-                pitch = pitch,
+                StringNo = stringNo,
                 timeRange = new Util.TimeRange(time, time + duration)
             };
 

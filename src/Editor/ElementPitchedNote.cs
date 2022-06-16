@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 
@@ -12,7 +13,7 @@ namespace Composer.Editor
         List<Segment> segments;
 
         Util.TimeRange timeRange;
-        Util.Pitch pitch;
+        int stringNo;
 
 
         public ElementPitchedNote(
@@ -27,7 +28,7 @@ namespace Composer.Editor
             this.segments = new List<Segment>();
 
             this.timeRange = this.projectPitchedNote.timeRange;
-            this.pitch = this.projectPitchedNote.pitch;
+            this.stringNo = this.projectPitchedNote.StringNo;
 
             this.assignedTrack = -1;
             for (var i = 0; i < this.manager.rows[0].trackSegments.Count; i++)
@@ -61,13 +62,6 @@ namespace Composer.Editor
             {
                 var trackPitchedNote = (TrackSegmentPitchedNotes)row.trackSegments[this.assignedTrack];
 
-                if (this.pitch.MidiPitch < trackPitchedNote.minPitch.MidiPitch ||
-                    this.pitch.MidiPitch > trackPitchedNote.maxPitch.MidiPitch)
-                    continue;
-
-                var midiPitchMinusTrackMin =
-                    this.pitch.MidiPitch - trackPitchedNote.minPitch.MidiPitch;
-
                 var startTimeMinusTrackStart = System.Math.Max(
                     0,
                     this.timeRange.Start - trackPitchedNote.row.timeRange.Start);
@@ -78,9 +72,9 @@ namespace Composer.Editor
 
                 var noteRect = new Util.Rect(
                     trackPitchedNote.contentRect.xMin + tMult * startTimeMinusTrackStart,
-                    trackPitchedNote.contentRect.yMax - pMult * (midiPitchMinusTrackMin + 1),
+                    trackPitchedNote.contentRect.yMax - pMult * (stringNo + 1),
                     trackPitchedNote.contentRect.xMin + tMult * endTimeMinusTrackStart,
-                    trackPitchedNote.contentRect.yMax - pMult * midiPitchMinusTrackMin);
+                    trackPitchedNote.contentRect.yMax - pMult * stringNo);
 
                 this.segments.Add(new Segment { noteRect = noteRect });
 
@@ -101,7 +95,7 @@ namespace Composer.Editor
         public override void EndModify()
         {
             this.projectPitchedNote.timeRange = this.timeRange;
-            this.projectPitchedNote.pitch = this.pitch;
+            this.projectPitchedNote.StringNo = this.stringNo;
 
             this.manager.project.InsertPitchedNote(
                 this.manager.project.GetTrackIndex(this.projectTrackPitchedNode),
@@ -114,22 +108,20 @@ namespace Composer.Editor
             this.timeRange =
                 this.projectPitchedNote.timeRange.OffsetBy(this.manager.DragTimeOffsetClampedToRow);
 
-            this.pitch =
-                this.projectPitchedNote.pitch.OffsetMidiPitchBy(this.manager.DragMidiPitchOffset);
+            this.stringNo = (int)Math.Round(
+                this.projectPitchedNote.StringNo + this.manager.DragMidiPitchOffset);
         }
 
 
         public override void OnPressUp(bool ctrlKey, bool shiftKey)
         {
-            this.pitch =
-                this.pitch.OffsetMidiPitchBy(shiftKey ? 12 : 1);
+            this.stringNo++;
         }
 
 
         public override void OnPressDown(bool ctrlKey, bool shiftKey)
         {
-            this.pitch =
-                this.pitch.OffsetMidiPitchBy(shiftKey ? -12 : -1);
+            this.stringNo--;
         }
 
 

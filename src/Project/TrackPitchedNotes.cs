@@ -17,7 +17,7 @@ namespace Composer.Project
 
         public void InsertPitchedNote(PitchedNote pitchedNote)
         {
-            this.EraseRange(pitchedNote.timeRange, pitchedNote.pitch);
+            this.EraseRange(pitchedNote.timeRange, pitchedNote.StringNo);
             this.notes.Add(pitchedNote);
         }
 
@@ -46,28 +46,28 @@ namespace Composer.Project
         }
 
 
-        public void EraseRange(Util.TimeRange timeRange, Util.Pitch? onlyAtPitch = null)
+        public void EraseRange(Util.TimeRange timeRange, int? onlyAtString = null)
         {
-            this.SplitNotesAt(timeRange.Start, onlyAtPitch);
-            this.SplitNotesAt(timeRange.End, onlyAtPitch);
+            this.SplitNotesAt(timeRange.Start, onlyAtString);
+            this.SplitNotesAt(timeRange.End, onlyAtString);
 
             this.notes.RemoveOverlappingRange(timeRange,
-                (note) => !onlyAtPitch.HasValue || note.pitch.MidiPitch == onlyAtPitch.Value.MidiPitch);
+                (note) => !onlyAtString.HasValue || note.StringNo == onlyAtString);
         }
 
 
-        public void SplitNotesAt(float splitTime, Util.Pitch? onlyAtPitch = null)
+        public void SplitNotesAt(float splitTime, int? onlyAtString = null)
         {
             var newNotes = new List<PitchedNote>();
 
             foreach (var note in this.notes.EnumerateOverlapping(splitTime))
             {
-                if (onlyAtPitch.HasValue && note.pitch.MidiPitch != onlyAtPitch.Value.MidiPitch)
+                if (onlyAtString.HasValue && note.StringNo != onlyAtString)
                     continue;
 
                 newNotes.Add(new PitchedNote
                 {
-                    pitch = note.pitch,
+                    StringNo = note.StringNo,
                     timeRange = Util.TimeRange.StartEnd(splitTime, note.timeRange.End)
                 });
                 note.timeRange.End = splitTime;
