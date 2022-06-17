@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using NAudio.Wave;
+using Composer.Project;
+using Composer.Util;
 
 namespace Composer.AudioOut
 {
@@ -13,11 +15,12 @@ namespace Composer.AudioOut
         private int tempo;
         private int samplesPerStep;
 
-        public PatternSequencer(NotePattern drumPattern, SampleKit kit)
+        public PatternSequencer(NotePattern drumPattern, SampleKit kit, Tuning tuning)
         {
             drumKit = kit;
             this.drumPattern = drumPattern;
             Tempo = 120;
+            Tuning = tuning;
         }
 
         public bool Loop { get; set; }
@@ -34,6 +37,8 @@ namespace Composer.AudioOut
                 }
             }
         }
+
+        public Tuning Tuning { get; }
 
         private bool newTempo;
         private int currentStep;
@@ -62,11 +67,12 @@ namespace Composer.AudioOut
                     break;
                 }
 
-                for (int note = 0; note < drumPattern.Notes; note++)
+                if (drumPattern.Pattern.TryGetValue(currentStep, out HashSet<FretboardNote> notes))
                 {
-                    if (drumPattern[note, currentStep] != 0)
+                    foreach (FretboardNote note in notes)
                     {
-                        var sampleProvider = drumKit.GetSampleProvider(note);
+                        (Note n, int octave) = note.ResolveNote(this.Tuning);
+                        var sampleProvider = drumKit.GetSampleProvider(n, octave);
                         sampleProvider.DelayBy = delayForThisStep;
                         Debug.WriteLine("beat at step {0}, patternPostion={1}, delayBy {2}", currentStep, patternPosition, delayForThisStep);
                         mixerInputs.Add(sampleProvider);

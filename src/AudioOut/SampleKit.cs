@@ -1,28 +1,39 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Composer.Util;
 using NAudio.Wave;
 
 namespace Composer.AudioOut
 {
     class SampleKit
     {
-        private readonly List<SampleSource> sampleSources;
+        private readonly Dictionary<string, SampleSource> sampleSources;
 
-        public SampleKit(NotePattern pattern)
+        public SampleKit()
         {
-            sampleSources = new List<SampleSource>();
-            foreach (string name in pattern.NoteNames)
+            // TODO: preaload this
+            sampleSources = new();
+            
+            foreach (string name in Directory.GetFiles("AudioOut\\Guitar1\\").Where(x => x.EndsWith(".wav")))
             {
-                sampleSources.Add(SampleSource.CreateFromWaveFile("AudioOut\\Guitar1\\" + name + ".wav"));
+                string noteName = name.Split(new[] { "\\", ".wav" }, System.StringSplitOptions.RemoveEmptyEntries).Last().ToUpperInvariant();
+                sampleSources.Add(noteName, SampleSource.CreateFromWaveFile(name));
             }
 
-            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleSources[0].SampleWaveFormat.SampleRate, sampleSources[0].SampleWaveFormat.Channels);
+            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleSources.First().Value.SampleWaveFormat.SampleRate, sampleSources.First().Value.SampleWaveFormat.Channels);
         }
 
         public virtual WaveFormat WaveFormat { get; }
 
-        public MusicSampleProvider GetSampleProvider(int note)
+        public MusicSampleProvider GetSampleProvider(Note note, int octave)
         {
-            return new MusicSampleProvider(sampleSources[note]);
+            if (!sampleSources.TryGetValue(note.ToString().ToUpperInvariant() + octave, out SampleSource sampleSource))
+            {
+                sampleSource = sampleSources["ERROR"];
+            }
+
+            return new MusicSampleProvider(sampleSource);
         }
     }
 }

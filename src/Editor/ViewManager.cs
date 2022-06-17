@@ -90,7 +90,7 @@ namespace Composer.Editor
                 return false;
 
             var trackSegment = this.rows[0].trackSegments[this.cursorTrack1];
-            var trackSegmentPitchedNotes = trackSegment as TrackSegmentPitchedNotes;
+            var trackSegmentPitchedNotes = trackSegment as TrackSegmentFretboardNotes;
             if (trackSegmentPitchedNotes != null)
             {
                 trackIndex = this.project.GetTrackIndex(trackSegmentPitchedNotes.projectTracks[0]);
@@ -108,7 +108,7 @@ namespace Composer.Editor
         }
 
 
-        public Project.PitchedNote GetNoteInsertionModeNote()
+        public Project.FretboardNote GetNoteInsertionModeNote()
         {
             if (!this.noteInsertionMode)
                 return null;
@@ -117,9 +117,9 @@ namespace Composer.Editor
             {
                 if (element.selected)
                 {
-                    var note = element as ElementPitchedNote;
+                    var note = element as ElementFretboardNote;
                     if (note != null)
-                        return note.projectPitchedNote;
+                        return note.Note;
                 }
             }
 
@@ -129,17 +129,16 @@ namespace Composer.Editor
 
         public void Rebuild()
         {
-            var previouslySelectedPitchedNotes = new HashSet<Project.PitchedNote>();
-            var previouslySelectedKeyChanges = new HashSet<Project.KeyChange>();
+            var previouslySelectedPitchedNotes = new HashSet<Project.FretboardNote>();
             var previouslySelectedMeterChanges = new HashSet<Project.MeterChange>();
 
             foreach (var element in this.elements)
             {
                 if (element.selected)
                 {
-                    var elementPitchedNote = element as ElementPitchedNote;
+                    var elementPitchedNote = element as ElementFretboardNote;
                     if (elementPitchedNote != null)
-                        previouslySelectedPitchedNotes.Add(elementPitchedNote.projectPitchedNote);
+                        previouslySelectedPitchedNotes.Add(elementPitchedNote.Note);
                 }
             }
 
@@ -158,10 +157,7 @@ namespace Composer.Editor
                     isLastRow = false;
                 }
 
-                var row = new Row(this, new Util.TimeRange(currentTime, endTime), isLastRow);
-
-                row.trackSegmentKeyChanges = new TrackSegmentKeyChanges(this, row);
-                row.trackSegments.Add(row.trackSegmentKeyChanges);
+                var row = new Row(this, new Util.TimeRange(currentTime, endTime), isLastRow, this.project.Tuning);
 
                 row.trackSegmentMeterChanges = new TrackSegmentMeterChanges(this, row);
                 row.trackSegments.Add(row.trackSegmentMeterChanges);
@@ -171,19 +167,16 @@ namespace Composer.Editor
                     if (!track.visible)
                         continue;
 
-                    if (track is Project.TrackPitchedNotes)
-                        row.trackSegments.Add(new TrackSegmentPitchedNotes(
+                    if (track is Project.TrackFretboardNotes)
+                        row.trackSegments.Add(new TrackSegmentFretboardNotes(
                             this, row,
-                            new List<Project.TrackPitchedNotes> { (Project.TrackPitchedNotes)track }));
+                            new List<Project.TrackFretboardNotes> { (Project.TrackFretboardNotes)track }));
                 }
 
                 this.rows.Add(row);
                 currentTime = endTime;
                 currentSegment++;
             }
-
-            foreach (var keyChange in this.project.keyChanges)
-                this.elements.Add(new ElementKeyChange(this, keyChange));
 
             foreach (var meterChange in this.project.meterChanges)
                 this.elements.Add(new ElementMeterChange(this, meterChange));
@@ -193,12 +186,12 @@ namespace Composer.Editor
                 if (!track.visible)
                     continue;
 
-                var trackPitchedNotes = (track as Project.TrackPitchedNotes);
+                var trackPitchedNotes = (track as Project.TrackFretboardNotes);
                 if (trackPitchedNotes != null)
                 {
                     foreach (var note in trackPitchedNotes.notes)
                     {
-                        var element = new ElementPitchedNote(this, trackPitchedNotes, note);
+                        var element = new ElementFretboardNote(this, trackPitchedNotes, note);
                         element.selected = previouslySelectedPitchedNotes.Contains(note);
                         this.elements.Add(element);
                     }
@@ -238,17 +231,17 @@ namespace Composer.Editor
         }
 
 
-        public void SetPitchedNoteSelection(int projectTrackIndex, Project.PitchedNote pitchedNote, bool selected)
+        public void SetPitchedNoteSelection(int projectTrackIndex, Project.FretboardNote pitchedNote, bool selected)
         {
             var projectTrack = this.project.tracks[projectTrackIndex];
 
             foreach (var element in this.elements)
             {
-                var note = element as ElementPitchedNote;
+                var note = element as ElementFretboardNote;
                 if (note != null)
                 {
                     if (note.projectTrackPitchedNode == projectTrack &&
-                        note.projectPitchedNote == pitchedNote)
+                        note.Note == pitchedNote)
                         note.selected = selected;
                 }
             }
@@ -416,7 +409,7 @@ namespace Composer.Editor
                         case InteractableRegion.CursorKind.Select:
                             this.control.Cursor = System.Windows.Forms.Cursors.Hand; break;
                         case InteractableRegion.CursorKind.MoveAll:
-                            this.control.Cursor = System.Windows.Forms.Cursors.SizeAll; break;
+                            this.control.Cursor = System.Windows.Forms.Cursors.UpArrow; break;
                         case InteractableRegion.CursorKind.MoveHorizontal:
                             this.control.Cursor = System.Windows.Forms.Cursors.SizeWE; break;
                         default:

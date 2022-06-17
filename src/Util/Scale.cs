@@ -1,4 +1,4 @@
-﻿using static Composer.Util.RelativePitch;
+﻿using static Composer.Util.Note;
 
 
 namespace Composer.Util
@@ -31,16 +31,16 @@ namespace Composer.Util
         };
 
 
-        private static readonly RelativePitch[][] relativePitches = new RelativePitch[][]
+        private static readonly Note[][] relativePitches = new Note[][]
         {
-            new RelativePitch[] { C,  D,  E,  F,  G,  A,  B  }, /* Major */ 
-            new RelativePitch[] { C,  D,  Ds, F,  G,  A,  As }, /* Dorian */ 
-            new RelativePitch[] { C,  Cs, Ds, F,  G,  Gs, As }, /* Phrygian */ 
-            new RelativePitch[] { C,  D,  E,  Fs, G,  A,  B  }, /* Lydian */ 
-            new RelativePitch[] { C,  D,  E,  F,  G,  A,  As }, /* Mixolydian */ 
-            new RelativePitch[] { C,  D,  Ds, F,  G,  Gs, As }, /* NaturalMinor */ 
-            new RelativePitch[] { C,  Cs, Ds, F,  G,  Gs, As }, /* Locrian */ 
-            new RelativePitch[] { C,  D,  Ds, F,  G,  Gs, B  }, /* MelodicMinor */ 
+            new Note[] { C,  D,  E,  F,  G,  A,  B  }, /* Major */ 
+            new Note[] { C,  D,  Ds, F,  G,  A,  As }, /* Dorian */ 
+            new Note[] { C,  Cs, Ds, F,  G,  Gs, As }, /* Phrygian */ 
+            new Note[] { C,  D,  E,  Fs, G,  A,  B  }, /* Lydian */ 
+            new Note[] { C,  D,  E,  F,  G,  A,  As }, /* Mixolydian */ 
+            new Note[] { C,  D,  Ds, F,  G,  Gs, As }, /* NaturalMinor */ 
+            new Note[] { C,  Cs, Ds, F,  G,  Gs, As }, /* Locrian */ 
+            new Note[] { C,  D,  Ds, F,  G,  Gs, B  }, /* MelodicMinor */ 
         };
 
 
@@ -61,7 +61,7 @@ namespace Composer.Util
         }
 
 
-        public static RelativePitch[] GetRelativePitches(this Scale scale)
+        public static Note[] GetRelativePitches(this Scale scale)
         {
             return relativePitches[(int)scale];
         }
@@ -73,7 +73,7 @@ namespace Composer.Util
         }
 
 
-        public static bool HasRelativePitch(this Scale scale, RelativePitch relativePitch)
+        public static bool HasRelativePitch(this Scale scale, Note relativePitch)
         {
             return relativePitchesToDegree[(int)scale][(int)relativePitch] >= 0;
         }

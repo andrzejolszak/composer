@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using Composer.Util;
+using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
 namespace Composer.AudioOut
@@ -9,10 +10,10 @@ namespace Composer.AudioOut
         private readonly WaveFormat waveFormat;
         private readonly PatternSequencer sequencer;
 
-        public NotePatternSampleProvider(NotePattern pattern, bool loop)
+        public NotePatternSampleProvider(NotePattern pattern, bool loop, Tuning tuning)
         {
-            var kit = new SampleKit(pattern);
-            sequencer = new PatternSequencer(pattern, kit);
+            var kit = new SampleKit();
+            sequencer = new PatternSequencer(pattern, kit, tuning);
             sequencer.Loop = loop;
             waveFormat = kit.WaveFormat;
             mixer = new MixingSampleProvider(waveFormat);

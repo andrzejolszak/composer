@@ -70,15 +70,15 @@ namespace Composer
         public void ExecuteAudioJob()
         {
             WaveOut audioOut = new WaveOut();
-            NotePattern pattern = new NotePattern(new[] { "b", "c", "d", "ds", "g" }, 16);
+            NotePattern pattern = new NotePattern();
             int c = 0;
-            foreach (PitchedNote note in (this.currentProject.tracks.First() as TrackPitchedNotes).notes)
+            foreach (FretboardNote note in (this.currentProject.tracks.First() as TrackFretboardNotes).notes)
             {
-                pattern[note.StringNo % pattern.Notes, c % pattern.Steps] = 1;
+                pattern.Add(c, note);
                 c++;
             }
 
-            NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false);
+            NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false, this.currentProject.Tuning);
             patternSequencer.Tempo = 90;
 
             audioOut.Init(patternSequencer);
@@ -105,22 +105,21 @@ namespace Composer
                 float time;
                 if (this.editor.GetInsertionPosition(out trackIndex, out time))
                 {
-                    var relativePitch = Util.RelativePitch.C;
-                    if (keyData == Keys.Z) relativePitch = Util.RelativePitch.C;
-                    if (keyData == Keys.S) relativePitch = Util.RelativePitch.Cs;
-                    if (keyData == Keys.X) relativePitch = Util.RelativePitch.D;
-                    if (keyData == Keys.D) relativePitch = Util.RelativePitch.Ds;
-                    if (keyData == Keys.C) relativePitch = Util.RelativePitch.E;
-                    if (keyData == Keys.V) relativePitch = Util.RelativePitch.F;
-                    if (keyData == Keys.G) relativePitch = Util.RelativePitch.Fs;
-                    if (keyData == Keys.B) relativePitch = Util.RelativePitch.G;
-                    if (keyData == Keys.H) relativePitch = Util.RelativePitch.Gs;
-                    if (keyData == Keys.N) relativePitch = Util.RelativePitch.A;
-                    if (keyData == Keys.J) relativePitch = Util.RelativePitch.As;
-                    if (keyData == Keys.M) relativePitch = Util.RelativePitch.B;
+                    var relativePitch = Util.Note.C;
+                    if (keyData == Keys.Z) relativePitch = Util.Note.C;
+                    if (keyData == Keys.S) relativePitch = Util.Note.Cs;
+                    if (keyData == Keys.X) relativePitch = Util.Note.D;
+                    if (keyData == Keys.D) relativePitch = Util.Note.Ds;
+                    if (keyData == Keys.C) relativePitch = Util.Note.E;
+                    if (keyData == Keys.V) relativePitch = Util.Note.F;
+                    if (keyData == Keys.G) relativePitch = Util.Note.Fs;
+                    if (keyData == Keys.B) relativePitch = Util.Note.G;
+                    if (keyData == Keys.H) relativePitch = Util.Note.Gs;
+                    if (keyData == Keys.N) relativePitch = Util.Note.A;
+                    if (keyData == Keys.J) relativePitch = Util.Note.As;
+                    if (keyData == Keys.M) relativePitch = Util.Note.B;
 
-                    var pitch = Util.RelativePitchData.GetString(relativePitch, 5);
-                    this.InsertPitchedNote(trackIndex, time, 960 / 4, pitch);
+                    this.InsertPitchedNote(trackIndex, time, 960 / 4, ((int)relativePitch) % 6, 5);
                 }
 
                 return true;
@@ -179,13 +178,14 @@ namespace Composer
         }
 
 
-        private void InsertPitchedNote(int trackIndex, float time, float duration, int stringNo)
+        private void InsertPitchedNote(int trackIndex, float time, float duration, int stringNo, int fret)
         {
             this.editor.UnselectAll();
 
-            var note = new Project.PitchedNote
+            var note = new Project.FretboardNote
             {
                 StringNo = stringNo,
+                Fret = fret,
                 timeRange = new Util.TimeRange(time, time + duration)
             };
 

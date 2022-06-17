@@ -3,26 +3,26 @@
 
 namespace Composer.Project
 {
-    public class TrackPitchedNotes : Track
+    public class TrackFretboardNotes : Track
     {
-        public Util.TimeRangeSortedList<PitchedNote> notes;
+        public Util.TimeRangeSortedList<FretboardNote> notes;
 
 
-        public TrackPitchedNotes(string name)
+        public TrackFretboardNotes(string name)
         {
             this.name = name;
-            this.notes = new Util.TimeRangeSortedList<PitchedNote>(n => n.timeRange);
+            this.notes = new Util.TimeRangeSortedList<FretboardNote>(n => n.timeRange);
         }
 
 
-        public void InsertPitchedNote(PitchedNote pitchedNote)
+        public void InsertPitchedNote(FretboardNote pitchedNote)
         {
             this.EraseRange(pitchedNote.timeRange, pitchedNote.StringNo);
             this.notes.Add(pitchedNote);
         }
 
 
-        public void RemovePitchedNote(PitchedNote pitchedNote)
+        public void RemovePitchedNote(FretboardNote pitchedNote)
         {
             this.notes.Remove(pitchedNote);
         }
@@ -58,19 +58,20 @@ namespace Composer.Project
 
         public void SplitNotesAt(float splitTime, int? onlyAtString = null)
         {
-            var newNotes = new List<PitchedNote>();
+            var newNotes = new List<FretboardNote>();
 
             foreach (var note in this.notes.EnumerateOverlapping(splitTime))
             {
                 if (onlyAtString.HasValue && note.StringNo != onlyAtString)
                     continue;
 
-                newNotes.Add(new PitchedNote
+                newNotes.Add(new FretboardNote
                 {
                     StringNo = note.StringNo,
+                    Fret = note.Fret,
                     timeRange = Util.TimeRange.StartEnd(splitTime, note.timeRange.End)
                 });
-                note.timeRange.End = splitTime;
+                note.timeRange = new Util.TimeRange(note.timeRange.Start, splitTime);
             }
 
             this.notes.Sort();

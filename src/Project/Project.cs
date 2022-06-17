@@ -7,16 +7,16 @@ namespace Composer.Project
     {
         float length;
         public Util.TimeSortedList<SectionBreak> sectionBreaks;
-        public Util.TimeSortedList<KeyChange> keyChanges;
         public Util.TimeSortedList<MeterChange> meterChanges;
         public List<Track> tracks;
 
+        public Util.Tuning Tuning { get; set; }
 
         public Project(float startingLength)
         {
             this.length = startingLength;
+            this.Tuning = Util.Tuning.Standard;
             this.sectionBreaks = new Util.TimeSortedList<SectionBreak>(sb => sb.time);
-            this.keyChanges = new Util.TimeSortedList<KeyChange>(kc => kc.time);
             this.meterChanges = new Util.TimeSortedList<MeterChange>(mc => mc.time);
             this.tracks = new List<Track>();
         }
@@ -50,16 +50,6 @@ namespace Composer.Project
         }
 
 
-        public void InsertKeyChange(KeyChange newKeyChange)
-        {
-            if (newKeyChange.time < 0 || newKeyChange.time >= this.length)
-                return;
-
-            this.keyChanges.RemoveAll(kc => kc.time == newKeyChange.time);
-            this.keyChanges.Add(newKeyChange);
-        }
-
-
         public void InsertMeterChange(MeterChange newMeterChange)
         {
             if (newMeterChange.time < 0 || newMeterChange.time >= this.length)
@@ -70,27 +60,25 @@ namespace Composer.Project
         }
 
 
-        public void InsertPitchedNote(int trackIndex, PitchedNote pitchedNote)
+        public void InsertPitchedNote(int trackIndex, FretboardNote pitchedNote)
         {
-            pitchedNote.timeRange.Start = System.Math.Max(
+            pitchedNote.timeRange = new Util.TimeRange (System.Math.Max(
                 0,
-                pitchedNote.timeRange.Start);
-
-            pitchedNote.timeRange.End = System.Math.Min(
+                pitchedNote.timeRange.Start), System.Math.Min(
                 this.length,
-                pitchedNote.timeRange.End);
+                pitchedNote.timeRange.End));
 
             if (pitchedNote.timeRange.Duration <= 0)
                 return;
 
-            var track = (TrackPitchedNotes)this.tracks[trackIndex];
+            var track = (TrackFretboardNotes)this.tracks[trackIndex];
             track.InsertPitchedNote(pitchedNote);
         }
 
 
-        public void RemovePitchedNote(int trackIndex, PitchedNote pitchedNote)
+        public void RemovePitchedNote(int trackIndex, FretboardNote pitchedNote)
         {
-            var track = (TrackPitchedNotes)this.tracks[trackIndex];
+            var track = (TrackFretboardNotes)this.tracks[trackIndex];
             track.RemovePitchedNote(pitchedNote);
         }
 
@@ -98,12 +86,6 @@ namespace Composer.Project
         public void RemoveSectionBreak(SectionBreak sectionBreak)
         {
             this.sectionBreaks.Remove(sectionBreak);
-        }
-
-
-        public void RemoveKeyChange(KeyChange keyChange)
-        {
-            this.keyChanges.Remove(keyChange);
         }
 
 
@@ -130,15 +112,6 @@ namespace Composer.Project
                 }
             }
 
-            foreach (var keyChange in this.keyChanges.Clone())
-            {
-                if (keyChange.time >= startTime)
-                {
-                    this.RemoveKeyChange(keyChange);
-                    keyChange.time += duration;
-                    this.InsertKeyChange(keyChange);
-                }
-            }
 
             foreach (var meterChange in this.meterChanges.Clone())
             {
@@ -168,17 +141,6 @@ namespace Composer.Project
                     this.RemoveSectionBreak(sectionBreak);
                     sectionBreak.time -= timeRange.Duration;
                     this.InsertSectionBreak(sectionBreak);
-                }
-            }
-
-            this.keyChanges.RemoveAll(kc => timeRange.Overlaps(kc.time));
-            foreach (var keyChange in this.keyChanges.Clone())
-            {
-                if (keyChange.time >= timeRange.Start)
-                {
-                    this.RemoveKeyChange(keyChange);
-                    keyChange.time -= timeRange.Duration;
-                    this.InsertKeyChange(keyChange);
                 }
             }
 

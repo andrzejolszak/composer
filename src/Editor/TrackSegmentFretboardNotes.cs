@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using Composer.Util;
+using System.Collections.Generic;
 using System.Drawing;
 
 
 namespace Composer.Editor
 {
-    class TrackSegmentPitchedNotes : TrackSegment
+    class TrackSegmentFretboardNotes : TrackSegment
     {
-        public List<Project.TrackPitchedNotes> projectTracks;
+        public List<Project.TrackFretboardNotes> projectTracks;
 
         const float LAYOUT_MARGIN = 4;
 
 
-        public TrackSegmentPitchedNotes(
+        public TrackSegmentFretboardNotes(
             ViewManager manager,
             Row row,
-            List<Project.TrackPitchedNotes> projectTracks)
+            List<Project.TrackFretboardNotes> projectTracks)
             : base(manager, row)
         {
             this.projectTracks = projectTracks;
@@ -91,60 +92,33 @@ namespace Composer.Editor
 
             using (var font = new Font("Verdana", this.manager.PitchedNoteHeight / 1.5f))
             {
-                // Draw pitch separators.
-                for (var i = 0; i < this.row.trackSegmentKeyChanges.affectingKeyChanges.Count; i++)
+                var keyStartTime = this.row.timeRange.Start;
+
+                var keyEndTime = rowEndTime;
+
+                var keyStartX = (int)
+                    (this.contentRect.xMin + (keyStartTime - this.row.timeRange.Start) *
+                    this.manager.TimeToPixelsMultiplier);
+
+                var keyEndX = (int)
+                    (this.contentRect.xMin + (keyEndTime - this.row.timeRange.Start) *
+                    this.manager.TimeToPixelsMultiplier);
+
+                for (var p = 0; p < this.row.tuning.TuningStrings.Count; p++)
                 {
-                    var keyChange = this.row.trackSegmentKeyChanges.affectingKeyChanges[i];
+                    var y = (int) (this.contentRect.yMax - (p - 0) * this.manager.PitchedNoteHeight);
 
-                    var keyStartTime = this.row.timeRange.Start;
-                    if (keyChange != null)
-                        keyStartTime = System.Math.Max(keyStartTime, keyChange.time);
+                    using Pen stringPen = new Pen(Brushes.Gray, 0.1f + 2f * ((this.row.tuning.TuningStrings.Count - p) / 6f));
+                    g.DrawLine(stringPen, keyStartX, y - this.manager.PitchedNoteHeight / 2f, keyEndX, y - this.manager.PitchedNoteHeight / 2f);
 
-                    var keyEndTime = rowEndTime;
-                    if (i + 1 < this.row.trackSegmentKeyChanges.affectingKeyChanges.Count)
-                        keyEndTime = this.row.trackSegmentKeyChanges.affectingKeyChanges[i + 1].time;
-
-                    var keyStartX = (int)
-                        (this.contentRect.xMin + (keyStartTime - this.row.timeRange.Start) *
-                        this.manager.TimeToPixelsMultiplier);
-
-                    var keyEndX = (int)
-                        (this.contentRect.xMin + (keyEndTime - this.row.timeRange.Start) *
-                        this.manager.TimeToPixelsMultiplier);
-
-                    for (var p = 0; p <= 5; p++)
-                    {
-                        var isTonicPitch =
-                            keyChange != null;
-
-                        var y = (int)
-                            (this.contentRect.yMax - (p - 0) *
-                            this.manager.PitchedNoteHeight);
-
-                        g.DrawLine(isTonicPitch ? Pens.Gray : Pens.LightGray,
-                            keyStartX, y,
-                            keyEndX, y);
-
-                        if (true)
-                        {
-                            g.DrawString(
-                                Util.RelativePitchData.GetSimpleName((Util.RelativePitch)p),
-                                font,
-                                Brushes.MediumVioletRed,
-                                keyStartX + 3, y - this.manager.PitchedNoteHeight);
-                        }
-                    }
+                    (Note, int) e = this.row.tuning.TuningStrings[p];
+                    g.DrawString(
+                        Util.RelativePitchData.GetSimpleName(e.Item1) + e.Item2,
+                        font,
+                        Brushes.MediumVioletRed,
+                        keyStartX - 15, y - this.manager.PitchedNoteHeight);
                 }
             }
-
-            // Draw frame.
-            g.DrawRectangle(Pens.Black,
-                (int)this.contentRect.xMin, (int)this.contentRect.yMin,
-                rowEndX - (int)this.contentRect.xMin, (int)this.contentRect.ySize);
-
-            g.DrawLine(Pens.Black,
-                (int)this.contentRect.xMax - 1, (int)this.contentRect.yMin,
-                (int)this.contentRect.xMax - 1, (int)this.contentRect.yMax);
         }
     }
 }

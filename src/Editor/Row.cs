@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Composer.Util;
+using System.Collections.Generic;
 using System.Drawing;
 
 
@@ -12,11 +13,11 @@ namespace Composer.Editor
         public Util.Rect contentRect;
         public List<InteractableRegion> interactableRegions;
 
-        public TrackSegmentKeyChanges trackSegmentKeyChanges;
         public TrackSegmentMeterChanges trackSegmentMeterChanges;
         public List<TrackSegment> trackSegments;
 
         public bool isLastRow;
+        public Tuning tuning;
         public float resizeEndTime;
 
         InteractableRegion regionResizeHandle;
@@ -28,7 +29,7 @@ namespace Composer.Editor
         const int ADD_SECTION_BUTTON_MARGIN = 2;
 
 
-        public Row(ViewManager manager, Util.TimeRange timeRange, bool isLastRow)
+        public Row(ViewManager manager, Util.TimeRange timeRange, bool isLastRow, Tuning tuning)
         {
             this.manager = manager;
             this.timeRange = timeRange;
@@ -36,6 +37,7 @@ namespace Composer.Editor
             this.trackSegments = new List<TrackSegment>();
             this.interactableRegions = new List<InteractableRegion>();
             this.isLastRow = isLastRow;
+            this.tuning = tuning;
         }
 
 

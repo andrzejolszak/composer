@@ -62,6 +62,7 @@ namespace Composer.Editor
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             e.Graphics.FillRectangle(System.Drawing.Brushes.White, 0, 0, Width, Height);
             this.viewManager.Draw(e.Graphics);
             base.OnPaint(e);
