@@ -5,3 +5,4 @@
 **/packages/*
 !**/packages/build/
 /.vs
+/src/Composer.csproj.user
