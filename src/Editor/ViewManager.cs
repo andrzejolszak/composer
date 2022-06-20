@@ -636,13 +636,13 @@ namespace Composer.Editor
 
         public float TimeToPixelsMultiplier
         {
-            get { return 100f / this.project.WholeNoteDuration; }
+            get { return 100f / this.project.BarDuration; }
         }
 
 
         public float TimeSnap
         {
-            get { return this.project.WholeNoteDuration / 16; }
+            get { return this.project.BarDuration / 4; }
         }
 
 

@@ -119,7 +119,7 @@ namespace Composer
                     if (keyData == Keys.J) relativePitch = Util.Note.As;
                     if (keyData == Keys.M) relativePitch = Util.Note.B;
 
-                    this.InsertPitchedNote(trackIndex, time, 960 / 4, ((int)relativePitch) % 6, 5);
+                    this.InsertPitchedNote(trackIndex, time, 256 / 4, ((int)relativePitch) % 6, 5);
                 }
 
                 return true;

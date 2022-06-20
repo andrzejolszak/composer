@@ -121,9 +121,6 @@ namespace Composer.Editor
                 if (this.resizeEndTime < this.timeRange.End)
                     this.manager.project.CutRange(
                         Util.TimeRange.StartEnd(this.resizeEndTime, this.timeRange.End));
-                else
-                    this.manager.project.InsertEmptySpace(
-                        this.timeRange.End, this.resizeEndTime - this.timeRange.End);
             }
             this.manager.Rebuild();
         }
@@ -131,14 +128,14 @@ namespace Composer.Editor
 
         public void Click_AddSectionBefore(InteractableRegion region)
         {
-            this.manager.project.InsertSection(this.timeRange.Start, this.manager.project.WholeNoteDuration * 4);
+            this.manager.project.InsertSection(this.timeRange.Start, this.manager.project.BarDuration * 4);
             this.manager.Rebuild();
         }
 
 
         public void Click_AddSectionAfter(InteractableRegion region)
         {
-            this.manager.project.InsertSection(this.timeRange.End, this.manager.project.WholeNoteDuration * 4);
+            this.manager.project.InsertSection(this.timeRange.End, this.manager.project.BarDuration * 4);
             this.manager.Rebuild();
         }
 

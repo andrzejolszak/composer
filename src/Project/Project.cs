@@ -22,9 +22,9 @@ namespace Composer.Project
         }
 
 
-        public float WholeNoteDuration
+        public float BarDuration
         {
-            get { return 960; }
+            get { return 256; }
         }
 
 
@@ -94,40 +94,6 @@ namespace Composer.Project
             this.meterChanges.Remove(meterChange);
         }
 
-
-        public void InsertEmptySpace(float startTime, float duration)
-        {
-            if (startTime < 0 || duration <= 0)
-                return;
-
-            this.length += duration;
-
-            foreach (var sectionBreak in this.sectionBreaks.Clone())
-            {
-                if (sectionBreak.time >= startTime)
-                {
-                    this.RemoveSectionBreak(sectionBreak);
-                    sectionBreak.time += duration;
-                    this.InsertSectionBreak(sectionBreak);
-                }
-            }
-
-
-            foreach (var meterChange in this.meterChanges.Clone())
-            {
-                if (meterChange.time >= startTime)
-                {
-                    this.RemoveMeterChange(meterChange);
-                    meterChange.time += duration;
-                    this.InsertMeterChange(meterChange);
-                }
-            }
-
-            foreach (var track in this.tracks)
-                track.InsertEmptySpace(startTime, duration);
-        }
-
-
         public void CutRange(Util.TimeRange timeRange)
         {
             foreach (var track in this.tracks)
@@ -154,8 +120,6 @@ namespace Composer.Project
                     this.InsertMeterChange(meterChange);
                 }
             }
-
-            this.length -= timeRange.Duration;
         }
 
 
@@ -164,7 +128,6 @@ namespace Composer.Project
             if (atTime < 0 || duration <= 0)
                 return;
 
-            this.InsertEmptySpace(atTime, duration);
             this.InsertSectionBreak(new SectionBreak(atTime));
             this.InsertSectionBreak(new SectionBreak(atTime + duration));
         }

@@ -70,7 +70,7 @@ namespace Composer.Editor
                     meterEndTime = this.row.trackSegmentMeterChanges.affectingMeterChanges[i + 1].time;
 
                 var beatCount = 0;
-                var beatDuration = this.manager.project.WholeNoteDuration / meterChange.meter.denominator;
+                var beatDuration = this.manager.project.BarDuration / meterChange.meter.denominator;
 
                 for (var n = meterChange.time; n < meterEndTime; n += beatDuration)
                 {
