@@ -71,11 +71,9 @@ namespace Composer
         {
             WaveOut audioOut = new WaveOut();
             NotePattern pattern = new NotePattern();
-            int c = 0;
             foreach (FretboardNote note in (this.currentProject.tracks.First() as TrackFretboardNotes).notes)
             {
-                pattern.Add(c, note);
-                c++;
+                pattern.Add((int)(note.timeRange.Start / (256 / 4)), note);
             }
 
             NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false, this.currentProject.Tuning);

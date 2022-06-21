@@ -73,7 +73,7 @@ namespace Composer.AudioOut
                     {
                         (Note n, int octave) = note.ResolveNote(this.Tuning);
                         var sampleProvider = drumKit.GetSampleProvider(n, octave);
-                        sampleProvider.DelayBy = delayForThisStep;
+                        sampleProvider.DelayBy = (int)(samplesPerStep * note.timeRange.Start / (256 / 4));
                         sampleProvider.Duration = (int)(samplesPerStep * note.timeRange.Duration / (256 / 4));
                         sampleProvider.PlayingStateChanged += s => this.NotePlayingStateChanged?.Invoke(note, s);
 
