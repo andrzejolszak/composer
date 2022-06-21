@@ -56,10 +56,22 @@ namespace Composer.AudioOut
                 int samplesToCopy = Math.Min(samplesNeeded, samplesAvailable);
                 if (Duration > 0 && position > delayBy + Duration)
                 {
+                    if (this.IsPlaying)
+                    {
+                        this.IsPlaying = false;
+                        this.PlayingStateChanged?.Invoke(false);
+                    }
+
                     Array.Clear(buffer, samplesWritten, samplesToCopy);
                 }
                 else
                 {
+                    if (!this.IsPlaying)
+                    {
+                        this.IsPlaying = true;
+                        this.PlayingStateChanged?.Invoke(true);
+                    }
+
                     Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
                 }
 
@@ -70,5 +82,9 @@ namespace Composer.AudioOut
         }
 
         private int PositionInSampleSource => (position - delayBy) + sampleSource.StartIndex;
+
+        public bool IsPlaying { get; set; }
+
+        public event Action<bool> PlayingStateChanged;
     }
 }

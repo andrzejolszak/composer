@@ -75,6 +75,8 @@ namespace Composer.AudioOut
                         var sampleProvider = drumKit.GetSampleProvider(n, octave);
                         sampleProvider.DelayBy = delayForThisStep;
                         sampleProvider.Duration = (int)(samplesPerStep * note.timeRange.Duration / (256 / 4));
+                        sampleProvider.PlayingStateChanged += s => this.NotePlayingStateChanged?.Invoke(note, s);
+
                         Debug.WriteLine("beat at step {0}, patternPostion={1}, delayBy {2}", currentStep, patternPosition, delayForThisStep);
                         mixerInputs.Add(sampleProvider);
                     }
@@ -99,5 +101,7 @@ namespace Composer.AudioOut
 
             return mixerInputs;
         }
+
+        public event Action<FretboardNote, bool> NotePlayingStateChanged;
     }
 }

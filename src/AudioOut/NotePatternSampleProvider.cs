@@ -8,28 +8,28 @@ namespace Composer.AudioOut
     {
         private readonly MixingSampleProvider mixer;
         private readonly WaveFormat waveFormat;
-        private readonly PatternSequencer sequencer;
+        public readonly PatternSequencer Sequencer;
 
         public NotePatternSampleProvider(NotePattern pattern, bool loop, Tuning tuning)
         {
             var kit = new SampleKit();
-            sequencer = new PatternSequencer(pattern, kit, tuning);
-            sequencer.Loop = loop;
+            Sequencer = new PatternSequencer(pattern, kit, tuning);
+            Sequencer.Loop = loop;
             waveFormat = kit.WaveFormat;
             mixer = new MixingSampleProvider(waveFormat);
         }
 
         public int Tempo
         {
-            get => sequencer.Tempo;
-            set => sequencer.Tempo = value;
+            get => Sequencer.Tempo;
+            set => Sequencer.Tempo = value;
         }
 
         public WaveFormat WaveFormat => waveFormat;
 
         public int Read(float[] buffer, int offset, int count)
         {
-            foreach (var mixerInput in sequencer.GetNextMixerInputs(count))
+            foreach (var mixerInput in Sequencer.GetNextMixerInputs(count))
             {
                 mixer.AddMixerInput(mixerInput);
             }

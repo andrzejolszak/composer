@@ -81,11 +81,25 @@ namespace Composer
             NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false, this.currentProject.Tuning);
             patternSequencer.Tempo = 90;
 
+            patternSequencer.Sequencer.NotePlayingStateChanged += Sequencer_NotePlayingStateChanged;
+
             audioOut.Init(patternSequencer);
             audioOut.PlaybackStopped += (s, e) => audioOut.Dispose();
+
             audioOut.Play();
         }
 
+        private void Sequencer_NotePlayingStateChanged(FretboardNote note, bool isPlaying)
+        {
+            if (!isPlaying)
+            {
+                return;
+            }
+
+            this.editor.SetCursorTimeRange(note.timeRange.Start + note.timeRange.Duration / 2, note.timeRange.Start + note.timeRange.Duration / 2);
+            this.editor.SetCursorVisible(true);
+            this.editorControl.Refresh();
+        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
