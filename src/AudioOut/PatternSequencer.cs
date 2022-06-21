@@ -74,6 +74,7 @@ namespace Composer.AudioOut
                         (Note n, int octave) = note.ResolveNote(this.Tuning);
                         var sampleProvider = drumKit.GetSampleProvider(n, octave);
                         sampleProvider.DelayBy = delayForThisStep;
+                        sampleProvider.Duration = (int)(samplesPerStep * note.timeRange.Duration / (256 / 4));
                         Debug.WriteLine("beat at step {0}, patternPostion={1}, delayBy {2}", currentStep, patternPosition, delayForThisStep);
                         mixerInputs.Add(sampleProvider);
                     }

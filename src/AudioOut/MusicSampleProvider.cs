@@ -31,6 +31,11 @@ namespace Composer.AudioOut
             }
         }
 
+        /// <summary>
+        /// 0 for sample's full duration.
+        /// </summary>
+        public int Duration { get; set; }
+
         public WaveFormat WaveFormat => sampleSource.SampleWaveFormat;
 
         public int Read(float[] buffer, int offset, int count)
@@ -43,12 +48,21 @@ namespace Composer.AudioOut
                 position += zeroFill;
                 samplesWritten += zeroFill;
             }
+            
             if (samplesWritten < count)
             {
                 int samplesNeeded = count - samplesWritten;
                 int samplesAvailable = sampleSource.Length - (position - delayBy);
                 int samplesToCopy = Math.Min(samplesNeeded, samplesAvailable);
-                Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
+                if (Duration > 0 && position > delayBy + Duration)
+                {
+                    Array.Clear(buffer, samplesWritten, samplesToCopy);
+                }
+                else
+                {
+                    Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
+                }
+
                 position += samplesToCopy;
                 samplesWritten += samplesToCopy;
             }
