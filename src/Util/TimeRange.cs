@@ -6,10 +6,10 @@
         float end;
 
 
-        public TimeRange(float start, float end)
+        public TimeRange(float start, float duration)
         {
             this.start = start;
-            this.end = end;
+            this.end = start + duration;
         }
 
 

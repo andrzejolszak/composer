@@ -6,6 +6,10 @@ using System.Threading;
 using System.Linq;
 using Composer.Project;
 using Composer.AudioOut;
+using Microsoft.VisualBasic;
+using NAudio.Wave.SampleProviders;
+using System.Diagnostics;
+using System.IO;
 
 namespace Composer
 {
@@ -14,6 +18,8 @@ namespace Composer
         public Project.Project currentProject;
         public Editor.ControlEditor editorControl;
         public Editor.ViewManager editor;
+
+        Dictionary<string, SampleKit> _kits = new Dictionary<string, SampleKit>();
 
         public FormMain(Project.Project project)
         {
@@ -59,6 +65,14 @@ namespace Composer
             editor.Rebuild();
             Refresh();
 
+            foreach (string s in Directory.GetDirectories("AudioOut"))
+            {
+                if (Directory.GetFiles(s).Count() > 0)
+                {
+                    string name = s.Split(Path.DirectorySeparatorChar).Last();
+                    this._kits[name] = new SampleKit(name);
+                }
+            }
         }
 
 
@@ -66,23 +80,33 @@ namespace Composer
         {
         }
 
-
         public void ExecuteAudioJob()
         {
             WaveOut audioOut = new WaveOut();
-            NotePattern pattern = new NotePattern();
-            foreach (FretboardNote note in (this.currentProject.tracks.First() as TrackFretboardNotes).notes)
+
+            List<NotePatternSampleProvider> trackSequencers = new List<NotePatternSampleProvider>();
+            foreach (TrackFretboardNotes track in this.currentProject.tracks)
             {
-                pattern.Add((int)(note.timeRange.Start / (256 / 4)), note);
+                NotePattern pattern = new NotePattern();
+                foreach (FretboardNote note in track.notes)
+                {
+                    pattern.Add((int)(note.timeRange.Start / (256 / 4)), note);
+                }
+
+                NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(this._kits[track.KitName], pattern, false, track.Tuning);
+                patternSequencer.Tempo = 90;
+
+                patternSequencer.Sequencer.NotePlayingStateChanged += Sequencer_NotePlayingStateChanged;
+
+                trackSequencers.Add(patternSequencer);
             }
 
-            NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(pattern, false, this.currentProject.Tuning);
-            patternSequencer.Tempo = 90;
-
-            patternSequencer.Sequencer.NotePlayingStateChanged += Sequencer_NotePlayingStateChanged;
-
-            audioOut.Init(patternSequencer);
-            audioOut.PlaybackStopped += (s, e) => audioOut.Dispose();
+            audioOut.Init(new MixingSampleProvider(trackSequencers));
+            audioOut.PlaybackStopped += (s, e) =>
+            {
+                audioOut.Volume = 0;
+                audioOut.Dispose();
+            };
 
             audioOut.Play();
         }

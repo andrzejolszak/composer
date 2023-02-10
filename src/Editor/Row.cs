@@ -38,6 +38,9 @@ namespace Composer.Editor
             this.interactableRegions = new List<InteractableRegion>();
             this.isLastRow = isLastRow;
             this.tuning = tuning;
+
+            this.trackSegmentMeterChanges = new TrackSegmentMeterChanges(manager, this);
+            this.trackSegments.Add(this.trackSegmentMeterChanges);
         }
 
 

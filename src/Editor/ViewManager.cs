@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Composer.Project;
+using System.Collections.Generic;
 using System.Drawing;
 
 
@@ -157,23 +158,21 @@ namespace Composer.Editor
                     isLastRow = false;
                 }
 
-                var row = new Row(this, new Util.TimeRange(currentTime, endTime), isLastRow, this.project.Tuning);
 
-                row.trackSegmentMeterChanges = new TrackSegmentMeterChanges(this, row);
-                row.trackSegments.Add(row.trackSegmentMeterChanges);
-
-                foreach (var track in this.project.tracks)
+                foreach (TrackFretboardNotes track in this.project.tracks)
                 {
+                    var row = new Row(this, new Util.TimeRange(currentTime, endTime - currentTime), isLastRow, track.Tuning);
+
                     if (!track.visible)
                         continue;
 
-                    if (track is Project.TrackFretboardNotes)
-                        row.trackSegments.Add(new TrackSegmentFretboardNotes(
-                            this, row,
-                            new List<Project.TrackFretboardNotes> { (Project.TrackFretboardNotes)track }));
+                    row.trackSegments.Add(new TrackSegmentFretboardNotes(
+                        this, row,
+                        new List<Project.TrackFretboardNotes> { track }));
+
+                    this.rows.Add(row);
                 }
 
-                this.rows.Add(row);
                 currentTime = endTime;
                 currentSegment++;
             }
@@ -186,7 +185,7 @@ namespace Composer.Editor
                 if (!track.visible)
                     continue;
 
-                var trackPitchedNotes = (track as Project.TrackFretboardNotes);
+                var trackPitchedNotes = (track as TrackFretboardNotes);
                 if (trackPitchedNotes != null)
                 {
                     foreach (var note in trackPitchedNotes.notes)
@@ -652,7 +651,7 @@ namespace Composer.Editor
             {
                 return new Util.TimeRange(
                     System.Math.Min(this.cursorTime1, this.cursorTime2),
-                    System.Math.Max(this.cursorTime1, this.cursorTime2));
+                    System.Math.Max(this.cursorTime1, this.cursorTime2) - System.Math.Min(this.cursorTime1, this.cursorTime2));
             }
         }
 

@@ -10,12 +10,9 @@ namespace Composer.Project
         public Util.TimeSortedList<MeterChange> meterChanges;
         public List<Track> tracks;
 
-        public Util.Tuning Tuning { get; set; }
-
         public Project(float startingLength)
         {
             this.length = startingLength;
-            this.Tuning = Util.Tuning.Standard;
             this.sectionBreaks = new Util.TimeSortedList<SectionBreak>(sb => sb.time);
             this.meterChanges = new Util.TimeSortedList<MeterChange>(mc => mc.time);
             this.tracks = new List<Track>();

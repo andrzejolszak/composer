@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
+using Composer.Util;
 
 namespace Composer.ToolWindows
 {
@@ -128,7 +128,7 @@ namespace Composer.ToolWindows
         private void AddPitchedNoteTrack()
         {
             var newIndex = this.owner.currentProject.tracks.Count;
-            var newTrack = new Project.TrackFretboardNotes("Track " + (newIndex + 1));
+            var newTrack = new Project.TrackFretboardNotes("Track " + (newIndex + 1), Tuning.Standard, "Nylon1");
             this.owner.currentProject.tracks.Add(newTrack);
 
             this.owner.editor.Rebuild();

@@ -28,5 +28,15 @@ namespace Composer.Util
                 (Note.B, 3),
                 (Note.E, 4),
             });
+
+        public static Tuning BassStandard => new Tuning(
+            "BassStandard",
+            new List<(Note, int)>
+            {
+                (Note.E, 1),
+                (Note.A, 1),
+                (Note.D, 2),
+                (Note.G, 2)
+            });
     }
 }

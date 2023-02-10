@@ -10,9 +10,8 @@ namespace Composer.AudioOut
         private readonly WaveFormat waveFormat;
         public readonly PatternSequencer Sequencer;
 
-        public NotePatternSampleProvider(NotePattern pattern, bool loop, Tuning tuning)
+        public NotePatternSampleProvider(SampleKit kit, NotePattern pattern, bool loop, Tuning tuning)
         {
-            var kit = new SampleKit();
             Sequencer = new PatternSequencer(pattern, kit, tuning);
             Sequencer.Loop = loop;
             waveFormat = kit.WaveFormat;

@@ -10,12 +10,11 @@ namespace Composer.AudioOut
     {
         private readonly Dictionary<string, SampleSource> sampleSources;
 
-        public SampleKit()
+        public SampleKit(string kitName)
         {
-            // TODO: preaload this
             sampleSources = new();
             
-            foreach (string name in Directory.GetFiles("AudioOut\\Nylon1\\").Where(x => x.EndsWith(".wav")))
+            foreach (string name in Directory.GetFiles($"AudioOut\\{kitName}\\").Where(x => x.EndsWith(".wav")))
             {
                 string noteName = name.Split(new[] { "\\", ".wav" }, System.StringSplitOptions.RemoveEmptyEntries).Last().ToUpperInvariant();
                 sampleSources.Add(noteName, SampleSource.CreateFromWaveFile(name));

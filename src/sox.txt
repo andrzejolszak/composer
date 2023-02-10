@@ -1,0 +1,14 @@
+$sourceDirectory = "C:\Users\Andrzej\source\repos\composer\src\AudioOut\Guitar1"
+>> $destinationDirectory = "C:\Users\Andrzej\source\repos\composer\src\AudioOut\Guitar2"
+>>
+>> # Grab the list of files
+>> $voxFiles = Get-ChildItem -Path $sourceDirectory -Filter "*.wav"
+>>
+>> # Loop over the files
+>> foreach ($voxFile in $voxFiles) {
+>>     $inputFile = $voxFile.FullName
+>>     $outputFile = Join-Path -Path $destinationDirectory -ChildPath $voxFile.Name
+>>
+>>     # Call CMD
+>>     & "C:\Program Files (x86)\sox-14-4-2\sox.exe" $inputFile $outputFile rate 44100
+>> }

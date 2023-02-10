@@ -31,7 +31,7 @@ namespace Composer.Editor
             this._timeRange = this.Note.timeRange;
             this._stringNo = this.Note.StringNo;
             this._fret = this.Note.Fret;
-            this._resolvedNote = this.Note.ResolveNote(manager.rows[0].tuning);
+            this._resolvedNote = this.Note.ResolveNote(this.projectTrackPitchedNode.Tuning);
 
             this.assignedTrack = -1;
             for (var i = 0; i < this.manager.rows[0].trackSegments.Count; i++)

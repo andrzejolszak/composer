@@ -1,17 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using Composer.Util;
+using System.Collections.Generic;
 
 
 namespace Composer.Project
 {
     public class TrackFretboardNotes : Track
     {
+        public Tuning Tuning { get; }
+
         public Util.TimeRangeSortedList<FretboardNote> notes;
 
+        public string KitName { get; private set; }
 
-        public TrackFretboardNotes(string name)
+        public TrackFretboardNotes(string name, Tuning tuning, string kitName)
         {
             this.name = name;
+            this.Tuning = tuning;
             this.notes = new Util.TimeRangeSortedList<FretboardNote>(n => n.timeRange);
+            this.KitName = kitName;
         }
 
 

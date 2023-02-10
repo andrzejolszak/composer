@@ -49,193 +49,253 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="AudioOut\Guitar1\b3.wav">
+    <None Update="AudioOut\Guitar2\b3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Guitar1\d3.wav">
+    <None Update="AudioOut\Guitar2\d3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Guitar1\ds3.wav">
+    <None Update="AudioOut\Guitar2\ds3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Guitar1\e2.wav">
+    <None Update="AudioOut\Guitar2\e2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Guitar1\error.wav">
+    <None Update="AudioOut\Guitar2\error.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Guitar1\g3.wav">
+    <None Update="AudioOut\Guitar2\g3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\a2.wav">
+    <None Update="AudioOut\Nylon2\a2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\a3.wav">
+    <None Update="AudioOut\Nylon2\a3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\a4.wav">
+    <None Update="AudioOut\Nylon2\a4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\a5.wav">
+    <None Update="AudioOut\Nylon2\a5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\as2.wav">
+    <None Update="AudioOut\Nylon2\as2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\as3.wav">
+    <None Update="AudioOut\Nylon2\as3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\as4.wav">
+    <None Update="AudioOut\Nylon2\as4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\as5.wav">
+    <None Update="AudioOut\Nylon2\as5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\b2.wav">
+    <None Update="AudioOut\Nylon2\b2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\b3.wav">
+    <None Update="AudioOut\Nylon2\b3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\b4.wav">
+    <None Update="AudioOut\Nylon2\b4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\b5.wav">
+    <None Update="AudioOut\Nylon2\b5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\c2.wav">
+    <None Update="AudioOut\Nylon2\c2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\c3.wav">
+    <None Update="AudioOut\Nylon2\c3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\c4.wav">
+    <None Update="AudioOut\Nylon2\c4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\c5.wav">
+    <None Update="AudioOut\Nylon2\c5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\c6.wav">
+    <None Update="AudioOut\Nylon2\c6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\cs2.wav">
+    <None Update="AudioOut\Nylon2\cs2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\cs3.wav">
+    <None Update="AudioOut\Nylon2\cs3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\cs4.wav">
+    <None Update="AudioOut\Nylon2\cs4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\cs5.wav">
+    <None Update="AudioOut\Nylon2\cs5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\cs6.wav">
+    <None Update="AudioOut\Nylon2\cs6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\d2.wav">
+    <None Update="AudioOut\Nylon2\d2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\d3.wav">
+    <None Update="AudioOut\Nylon2\d3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\d4.wav">
+    <None Update="AudioOut\Nylon2\d4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\d5.wav">
+    <None Update="AudioOut\Nylon2\d5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\d6.wav">
+    <None Update="AudioOut\Nylon2\d6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\ds2.wav">
+    <None Update="AudioOut\Nylon2\ds2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\ds3.wav">
+    <None Update="AudioOut\Nylon2\ds3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\ds4.wav">
+    <None Update="AudioOut\Nylon2\ds4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\ds5.wav">
+    <None Update="AudioOut\Nylon2\ds5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\ds6.wav">
+    <None Update="AudioOut\Nylon2\ds6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\e2.wav">
+    <None Update="AudioOut\Nylon2\e2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\e3.wav">
+    <None Update="AudioOut\Nylon2\e3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\e4.wav">
+    <None Update="AudioOut\Nylon2\e4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\e5.wav">
+    <None Update="AudioOut\Nylon2\e5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\e6.wav">
+    <None Update="AudioOut\Nylon2\e6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\error.wav">
+    <None Update="AudioOut\Nylon2\error.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\f2.wav">
+    <None Update="AudioOut\Nylon2\f2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\f3.wav">
+    <None Update="AudioOut\Nylon2\f3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\f4.wav">
+    <None Update="AudioOut\Nylon2\f4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\f5.wav">
+    <None Update="AudioOut\Nylon2\f5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\f6.wav">
+    <None Update="AudioOut\Nylon2\f6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\fs2.wav">
+    <None Update="AudioOut\Nylon2\fs2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\fs3.wav">
+    <None Update="AudioOut\Nylon2\fs3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\fs4.wav">
+    <None Update="AudioOut\Nylon2\fs4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\fs5.wav">
+    <None Update="AudioOut\Nylon2\fs5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\fs6.wav">
+    <None Update="AudioOut\Nylon2\fs6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\g2.wav">
+    <None Update="AudioOut\Nylon2\g2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\g3.wav">
+    <None Update="AudioOut\Nylon2\g3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\g4.wav">
+    <None Update="AudioOut\Nylon2\g4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\g5.wav">
+    <None Update="AudioOut\Nylon2\g5.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\g6.wav">
+    <None Update="AudioOut\Nylon2\g6.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\gs2.wav">
+    <None Update="AudioOut\Nylon2\gs2.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\gs3.wav">
+    <None Update="AudioOut\Nylon2\gs3.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\gs4.wav">
+    <None Update="AudioOut\Nylon2\gs4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AudioOut\Nylon1\gs5.wav">
+    <None Update="AudioOut\Nylon2\gs5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\a5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\as2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\as3.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\as4.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\c3.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\c6.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\cs4.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\cs5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\d3.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\ds4.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\ds5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\e2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\e3.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\error.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\f5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\fs3.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\fs4.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\g5.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\gs2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AudioOut\Ugk\gs4.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
