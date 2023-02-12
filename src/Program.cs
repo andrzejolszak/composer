@@ -27,10 +27,10 @@ namespace Composer
             project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 5, Fret = 12, timeRange = new TimeRange(256 / 4 * 3, 256 / 4) });
             project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 4, Fret = 9, timeRange = new TimeRange(256 / 4 * 4, 256 / 4) });
 
-            project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 0, Fret = 3, timeRange = new TimeRange(256 / 4 * 0, 256 / 4) });
-            project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 0, Fret = 5, timeRange = new TimeRange(256 / 4 * 1, 256 / 4) });
-            project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 0, Fret = 3, timeRange = new TimeRange(256 / 4 * 2, 256 / 4) });
-            project.InsertPitchedNote(0, new Project.FretboardNote { StringNo = 0, Fret = 7, timeRange = new TimeRange(256 / 4 * 3, 256 / 4) });
+            project.InsertPitchedNote(1, new Project.FretboardNote { StringNo = 0, Fret = 3, timeRange = new TimeRange(256 / 4 * 0, 256 / 4) });
+            project.InsertPitchedNote(1, new Project.FretboardNote { StringNo = 0, Fret = 5, timeRange = new TimeRange(256 / 4 * 1, 256 / 4) });
+            project.InsertPitchedNote(1, new Project.FretboardNote { StringNo = 0, Fret = 3, timeRange = new TimeRange(256 / 4 * 2, 256 / 4) });
+            project.InsertPitchedNote(1, new Project.FretboardNote { StringNo = 0, Fret = 7, timeRange = new TimeRange(256 / 4 * 3, 256 / 4) });
 
             Application.Run(new FormMain(project));
         }

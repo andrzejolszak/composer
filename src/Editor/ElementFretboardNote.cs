@@ -7,7 +7,6 @@ namespace Composer.Editor
 {
     class ElementFretboardNote : Element
     {
-        int assignedTrack = -1;
         public Project.FretboardNote Note;
         public Project.TrackFretboardNotes projectTrackPitchedNode;
         List<Segment> segments;
@@ -16,10 +15,12 @@ namespace Composer.Editor
         int _stringNo;
         int _fret;
         private (Util.Note, int) _resolvedNote;
+        private TrackSegmentFretboardNotes trackPitchedNote;
 
         public ElementFretboardNote(
             ViewManager manager,
             Project.TrackFretboardNotes projectTrackPitchedNode,
+            TrackSegmentFretboardNotes trackPitchedNote,
             Project.FretboardNote pitchedNote)
             : base(manager)
         {
@@ -33,17 +34,7 @@ namespace Composer.Editor
             this._fret = this.Note.Fret;
             this._resolvedNote = this.Note.ResolveNote(this.projectTrackPitchedNode.Tuning);
 
-            this.assignedTrack = -1;
-            for (var i = 0; i < this.manager.rows[0].trackSegments.Count; i++)
-            {
-                var trackPitchedNote = (this.manager.rows[0].trackSegments[i] as TrackSegmentFretboardNotes);
-                if (trackPitchedNote != null &&
-                    trackPitchedNote.projectTracks.Contains(this.projectTrackPitchedNode))
-                {
-                    this.assignedTrack = i;
-                    break;
-                }
-            }
+            this.trackPitchedNote = trackPitchedNote;
         }
 
 
@@ -61,29 +52,24 @@ namespace Composer.Editor
             var tMult = this.manager.TimeToPixelsMultiplier;
             var pMult = this.manager.PitchedNoteHeight;
 
-            foreach (var row in this.manager.EnumerateRowsInTimeRange(this._timeRange))
-            {
-                var trackPitchedNote = (TrackSegmentFretboardNotes)row.trackSegments[this.assignedTrack];
+            var startTimeMinusTrackStart = System.Math.Max(
+                0,
+                this._timeRange.Start - trackPitchedNote.row.timeRange.Start);
 
-                var startTimeMinusTrackStart = System.Math.Max(
-                    0,
-                    this._timeRange.Start - trackPitchedNote.row.timeRange.Start);
+            var endTimeMinusTrackStart = System.Math.Min(
+                trackPitchedNote.row.timeRange.End,
+                this._timeRange.End) - trackPitchedNote.row.timeRange.Start;
 
-                var endTimeMinusTrackStart = System.Math.Min(
-                    trackPitchedNote.row.timeRange.End,
-                    this._timeRange.End) - trackPitchedNote.row.timeRange.Start;
+            var noteRect = new Util.Rect(
+                trackPitchedNote.contentRect.xMin + tMult * startTimeMinusTrackStart,
+                trackPitchedNote.contentRect.yMax - pMult * (_stringNo + 1),
+                trackPitchedNote.contentRect.xMin + tMult * endTimeMinusTrackStart,
+                trackPitchedNote.contentRect.yMax - pMult * _stringNo);
 
-                var noteRect = new Util.Rect(
-                    trackPitchedNote.contentRect.xMin + tMult * startTimeMinusTrackStart,
-                    trackPitchedNote.contentRect.yMax - pMult * (_stringNo + 1),
-                    trackPitchedNote.contentRect.xMin + tMult * endTimeMinusTrackStart,
-                    trackPitchedNote.contentRect.yMax - pMult * _stringNo);
+            this.segments.Add(new Segment { noteRect = noteRect });
 
-                this.segments.Add(new Segment { noteRect = noteRect });
-
-                this.interactableRegions.Add(
-                    new InteractableRegion(InteractableRegion.CursorKind.MoveAll, noteRect));
-            }
+            this.interactableRegions.Add(
+                new InteractableRegion(InteractableRegion.CursorKind.MoveAll, noteRect));
         }
 
 

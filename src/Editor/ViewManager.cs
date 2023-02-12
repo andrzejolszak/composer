@@ -158,6 +158,8 @@ namespace Composer.Editor
                     isLastRow = false;
                 }
 
+                foreach (var meterChange in this.project.meterChanges)
+                    this.elements.Add(new ElementMeterChange(this, meterChange));
 
                 foreach (TrackFretboardNotes track in this.project.tracks)
                 {
@@ -166,35 +168,23 @@ namespace Composer.Editor
                     if (!track.visible)
                         continue;
 
-                    row.trackSegments.Add(new TrackSegmentFretboardNotes(
+                    var seg = new TrackSegmentFretboardNotes(
                         this, row,
-                        new List<Project.TrackFretboardNotes> { track }));
+                        new List<Project.TrackFretboardNotes> { track });
+                    row.trackSegments.Add(seg);
 
                     this.rows.Add(row);
-                }
 
-                currentTime = endTime;
-                currentSegment++;
-            }
-
-            foreach (var meterChange in this.project.meterChanges)
-                this.elements.Add(new ElementMeterChange(this, meterChange));
-
-            foreach (var track in this.project.tracks)
-            {
-                if (!track.visible)
-                    continue;
-
-                var trackPitchedNotes = (track as TrackFretboardNotes);
-                if (trackPitchedNotes != null)
-                {
-                    foreach (var note in trackPitchedNotes.notes)
+                    foreach (var note in track.notes)
                     {
-                        var element = new ElementFretboardNote(this, trackPitchedNotes, note);
+                        var element = new ElementFretboardNote(this, track, seg, note);
                         element.selected = previouslySelectedPitchedNotes.Contains(note);
                         this.elements.Add(element);
                     }
                 }
+
+                currentTime = endTime;
+                currentSegment++;
             }
 
             this.SetCursorTimeRange(this.cursorTime1, this.cursorTime2);
