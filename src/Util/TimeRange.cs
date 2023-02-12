@@ -42,7 +42,7 @@
 
         public TimeRange OffsetBy(float amount)
         {
-            return new TimeRange(this.start + amount, this.end + amount);
+            return new TimeRange(this.start + amount, this.Duration);
         }
 
 

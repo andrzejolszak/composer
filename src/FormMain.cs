@@ -222,7 +222,7 @@ namespace Composer
             {
                 StringNo = stringNo,
                 Fret = fret,
-                timeRange = new Util.TimeRange(time, time + duration)
+                timeRange = new Util.TimeRange(time, duration)
             };
 
             this.currentProject.InsertPitchedNote(trackIndex, note);

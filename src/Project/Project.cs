@@ -59,11 +59,14 @@ namespace Composer.Project
 
         public void InsertPitchedNote(int trackIndex, FretboardNote pitchedNote)
         {
-            pitchedNote.timeRange = new Util.TimeRange (System.Math.Max(
+            float start = System.Math.Max(
                 0,
-                pitchedNote.timeRange.Start), System.Math.Min(
-                this.length,
-                pitchedNote.timeRange.End));
+                pitchedNote.timeRange.Start);
+            pitchedNote.timeRange = new Util.TimeRange (
+                start, 
+                System.Math.Min(
+                this.length - start,
+                pitchedNote.timeRange.Duration));
 
             if (pitchedNote.timeRange.Duration <= 0)
                 return;
