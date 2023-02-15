@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AudioOut\Billy_bass.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="AudioOut\UGK_amped.sf2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

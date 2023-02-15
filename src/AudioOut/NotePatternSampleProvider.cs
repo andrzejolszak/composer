@@ -15,7 +15,7 @@ namespace Composer.AudioOut
         {
             Sequencer = new PatternSequencer(pattern, synth, tuning);
             Sequencer.Loop = loop;
-            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, synth.ChannelCount);
+            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, NoteSampleProvider.ChannelCount);
             mixer = new MixingSampleProvider(waveFormat);
         }
 

@@ -2,7 +2,7 @@
 {
     public enum Note
     {
-        C, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B
+        C = 0, Cs, D, Ds, E, F, Fs, G, Gs, A, As, B
     }
 
 

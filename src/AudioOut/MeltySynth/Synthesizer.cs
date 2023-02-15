@@ -22,7 +22,7 @@ namespace MeltySynth
         private readonly int blockSize;
         private readonly int maximumPolyphony;
         private readonly bool enableReverbAndChorus;
-
+        public readonly int DefaultChannel;
         private readonly int minimumVoiceDuration;
 
         private readonly Dictionary<int, Preset> presetLookup;
@@ -84,7 +84,7 @@ namespace MeltySynth
         /// </summary>
         /// <param name="soundFont">The SoundFont instance.</param>
         /// <param name="settings">The settings for synthesis.</param>
-        public Synthesizer(SoundFont soundFont, SynthesizerSettings settings)
+        public Synthesizer(SoundFont soundFont, SynthesizerSettings settings, int defaultChannel = -1)
         {
             if (soundFont == null)
             {
@@ -101,6 +101,7 @@ namespace MeltySynth
             this.blockSize = settings.BlockSize;
             this.maximumPolyphony = settings.MaximumPolyphony;
             this.enableReverbAndChorus = settings.EnableReverbAndChorus;
+            this.DefaultChannel = defaultChannel;
 
             minimumVoiceDuration = sampleRate / 500;
 

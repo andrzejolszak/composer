@@ -7,22 +7,26 @@ using NAudio.Wave;
 
 namespace Composer.AudioOut
 {
-    class NoteSampleProvider : ISampleProvider
+    public class NoteSampleProvider : ISampleProvider
     {
+        public const int ChannelCount = 2;
+
         private int delayBy;
         private int position;
-        private readonly Synthesizer _soundFontSynthesizer;
+        private readonly Synthesizer _synth;
         private readonly WaveFormat _waveFormat;
         private List<Voice> _voices;
         private Note _note;
         private readonly int _octave;
+        private readonly int _midiKey;
 
         public NoteSampleProvider(Note n, int octave, Synthesizer synth)
         {
             this._note = n;
             this._octave = octave;
-            this._soundFontSynthesizer = synth;
-            this._waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, synth.ChannelCount);
+            this._midiKey = 24 + octave * 12 + (int)n;
+            this._synth = synth;
+            this._waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, ChannelCount);
         }
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace Composer.AudioOut
             if (samplesWritten < count)
             {
                 int samplesNeeded = count - samplesWritten;
-                int samplesAvailable = _soundFontSynthesizer.BlockSize * 44100 - (position - delayBy);
+                int samplesAvailable = _synth.BlockSize * 44100 - (position - delayBy);
                 int samplesToCopy = Math.Min(samplesNeeded, samplesAvailable);
                 if (Duration > 0 && position > delayBy + Duration)
                 {
@@ -74,7 +78,7 @@ namespace Composer.AudioOut
                         {
                             foreach(Voice v in _voices)
                             {
-                                this._soundFontSynthesizer.NoteOff(v);
+                                this._synth.NoteOff(v);
                             }
 
                             this._voices = null;
@@ -89,10 +93,10 @@ namespace Composer.AudioOut
                     {
                         this.IsPlaying = true;
                         this.PlayingStateChanged?.Invoke(true);
-                        this._voices = this._soundFontSynthesizer.NoteOn(0, 50, 100);
+                        this._voices = this._synth.NoteOn(this._synth.DefaultChannel, this._midiKey, 100);
                     }
 
-                    this._soundFontSynthesizer.RenderInterleaved(buffer.AsSpan(samplesWritten, samplesToCopy));
+                    this._synth.RenderInterleaved(buffer.AsSpan(samplesWritten, samplesToCopy));
                     
                     // Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
                 }

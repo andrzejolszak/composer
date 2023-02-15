@@ -51,7 +51,7 @@ namespace Composer.AudioOut
             int samplePos = 0;
             if (newTempo)
             {
-                int samplesPerBeat = (synth.ChannelCount * synth.SampleRate * 60) / tempo;
+                int samplesPerBeat = (NoteSampleProvider.ChannelCount * synth.SampleRate * 60) / tempo;
                 samplesPerStep = samplesPerBeat / 4;
                 //patternPosition = 0;
                 newTempo = false;

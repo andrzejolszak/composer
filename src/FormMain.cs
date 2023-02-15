@@ -69,7 +69,10 @@ namespace Composer
             foreach (string s in Directory.GetFiles("AudioOut").Where(x => x.EndsWith("sf2")))
             {
                 string name = s.Split(Path.DirectorySeparatorChar).Last();
-                this._kits[name] = new Synthesizer("AudioOut/UGK_amped.sf2", new SynthesizerSettings(44100) { MaximumPolyphony = 128 });
+                for (int i = 0; i < 16; i++)
+                {
+                    this._kits[name + "/" + i] = new Synthesizer(new SoundFont(s), new SynthesizerSettings(44100) { MaximumPolyphony = 128 }, defaultChannel: i);
+                }
             }
         }
 
