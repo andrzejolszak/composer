@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using MeltySynth;
 using NAudio.Wave;
 
 namespace Composer.AudioOut
@@ -9,10 +10,15 @@ namespace Composer.AudioOut
         private int delayBy;
         private int position;
         private readonly SampleSource sampleSource;
+        private readonly Synthesizer _soundFontSynthesizer;
 
         public MusicSampleProvider(SampleSource sampleSource)
         {
             this.sampleSource = sampleSource;
+
+            this._soundFontSynthesizer = new Synthesizer("AudioOut/UGK_amped.sf2", 44100);
+            // _synthesizer.RenderInterleaved(buffer.AsSpan(offset, count));
+
         }
 
         /// <summary>
@@ -72,7 +78,11 @@ namespace Composer.AudioOut
                         this.PlayingStateChanged?.Invoke(true);
                     }
 
-                    Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
+                    this._soundFontSynthesizer.NoteOn(0, 50, 100);
+                    this._soundFontSynthesizer.RenderInterleaved(buffer.AsSpan(samplesWritten, samplesToCopy));
+                    this._soundFontSynthesizer.NoteOff(0, 50);
+                    
+                    // Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
                 }
 
                 position += samplesToCopy;
