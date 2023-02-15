@@ -15,10 +15,7 @@ namespace Composer.AudioOut
         public MusicSampleProvider(SampleSource sampleSource)
         {
             this.sampleSource = sampleSource;
-
-            this._soundFontSynthesizer = new Synthesizer("AudioOut/UGK_amped.sf2", 44100);
-            // _synthesizer.RenderInterleaved(buffer.AsSpan(offset, count));
-
+            this._soundFontSynthesizer = this.sampleSource.SoundFontSynthesizer;
         }
 
         /// <summary>
@@ -58,7 +55,7 @@ namespace Composer.AudioOut
             if (samplesWritten < count)
             {
                 int samplesNeeded = count - samplesWritten;
-                int samplesAvailable = sampleSource.Length - (position - delayBy);
+                int samplesAvailable = _soundFontSynthesizer.BlockSize * 44100 - (position - delayBy);
                 int samplesToCopy = Math.Min(samplesNeeded, samplesAvailable);
                 if (Duration > 0 && position > delayBy + Duration)
                 {
@@ -66,6 +63,7 @@ namespace Composer.AudioOut
                     {
                         this.IsPlaying = false;
                         this.PlayingStateChanged?.Invoke(false);
+                        this._soundFontSynthesizer.NoteOff(0, 50);
                     }
 
                     Array.Clear(buffer, samplesWritten, samplesToCopy);
@@ -76,11 +74,10 @@ namespace Composer.AudioOut
                     {
                         this.IsPlaying = true;
                         this.PlayingStateChanged?.Invoke(true);
+                        this._soundFontSynthesizer.NoteOn(0, 50, 100);
                     }
 
-                    this._soundFontSynthesizer.NoteOn(0, 50, 100);
                     this._soundFontSynthesizer.RenderInterleaved(buffer.AsSpan(samplesWritten, samplesToCopy));
-                    this._soundFontSynthesizer.NoteOff(0, 50);
                     
                     // Array.Copy(sampleSource.SampleData, PositionInSampleSource, buffer, samplesWritten, samplesToCopy);
                 }
@@ -88,6 +85,7 @@ namespace Composer.AudioOut
                 position += samplesToCopy;
                 samplesWritten += samplesToCopy;
             }
+
             return samplesWritten;
         }
 

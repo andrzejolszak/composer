@@ -24,6 +24,7 @@
 
   <PropertyGroup>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AssemblyName>$(MSBuildProjectName)2</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

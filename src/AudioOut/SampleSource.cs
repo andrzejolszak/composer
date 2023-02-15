@@ -1,4 +1,5 @@
 ﻿using System;
+using MeltySynth;
 using NAudio.Wave;
 
 namespace Composer.AudioOut
@@ -34,6 +35,7 @@ namespace Composer.AudioOut
             SampleWaveFormat = waveFormat;
             StartIndex = startIndex;
             Length = length;
+            SoundFontSynthesizer = new Synthesizer("AudioOut/UGK_amped.sf2", 44100);
         }
 
         /// <summary>
@@ -52,5 +54,6 @@ namespace Composer.AudioOut
         /// Number of valid samples
         /// </summary>
         public int Length { get; }
+        public Synthesizer SoundFontSynthesizer { get; }
     }
 }
