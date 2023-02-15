@@ -1,4 +1,5 @@
 ﻿using Composer.Util;
+using MeltySynth;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
@@ -10,11 +11,11 @@ namespace Composer.AudioOut
         private readonly WaveFormat waveFormat;
         public readonly PatternSequencer Sequencer;
 
-        public NotePatternSampleProvider(SampleKit kit, NotePattern pattern, bool loop, Tuning tuning)
+        public NotePatternSampleProvider(Synthesizer synth, NotePattern pattern, bool loop, Tuning tuning)
         {
-            Sequencer = new PatternSequencer(pattern, kit, tuning);
+            Sequencer = new PatternSequencer(pattern, synth, tuning);
             Sequencer.Loop = loop;
-            waveFormat = kit.WaveFormat;
+            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, synth.ChannelCount);
             mixer = new MixingSampleProvider(waveFormat);
         }
 

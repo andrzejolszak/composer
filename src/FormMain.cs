@@ -10,6 +10,7 @@ using Microsoft.VisualBasic;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
 using System.IO;
+using MeltySynth;
 
 namespace Composer
 {
@@ -19,7 +20,7 @@ namespace Composer
         public Editor.ControlEditor editorControl;
         public Editor.ViewManager editor;
 
-        Dictionary<string, SampleKit> _kits = new Dictionary<string, SampleKit>();
+        Dictionary<string, Synthesizer> _kits = new Dictionary<string, Synthesizer>();
 
         public FormMain(Project.Project project)
         {
@@ -65,13 +66,10 @@ namespace Composer
             editor.Rebuild();
             Refresh();
 
-            foreach (string s in Directory.GetDirectories("AudioOut"))
+            foreach (string s in Directory.GetFiles("AudioOut").Where(x => x.EndsWith("sf2")))
             {
-                if (Directory.GetFiles(s).Count() > 0)
-                {
-                    string name = s.Split(Path.DirectorySeparatorChar).Last();
-                    this._kits[name] = new SampleKit(name);
-                }
+                string name = s.Split(Path.DirectorySeparatorChar).Last();
+                this._kits[name] = new Synthesizer("AudioOut/UGK_amped.sf2", new SynthesizerSettings(44100) { MaximumPolyphony = 128 });
             }
         }
 

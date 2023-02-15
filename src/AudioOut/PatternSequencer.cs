@@ -5,19 +5,20 @@ using System.Diagnostics;
 using NAudio.Wave;
 using Composer.Project;
 using Composer.Util;
+using MeltySynth;
 
 namespace Composer.AudioOut
 {
     class PatternSequencer
     {
         private readonly NotePattern drumPattern;
-        private readonly SampleKit drumKit;
+        private readonly Synthesizer synth;
         private int tempo;
         private int samplesPerStep;
 
-        public PatternSequencer(NotePattern drumPattern, SampleKit kit, Tuning tuning)
+        public PatternSequencer(NotePattern drumPattern, Synthesizer synth, Tuning tuning)
         {
-            drumKit = kit;
+            this.synth = synth;
             this.drumPattern = drumPattern;
             Tempo = 120;
             Tuning = tuning;
@@ -50,7 +51,7 @@ namespace Composer.AudioOut
             int samplePos = 0;
             if (newTempo)
             {
-                int samplesPerBeat = (drumKit.WaveFormat.Channels * drumKit.WaveFormat.SampleRate * 60) / tempo;
+                int samplesPerBeat = (synth.ChannelCount * synth.SampleRate * 60) / tempo;
                 samplesPerStep = samplesPerBeat / 4;
                 //patternPosition = 0;
                 newTempo = false;
@@ -72,7 +73,7 @@ namespace Composer.AudioOut
                     foreach (FretboardNote note in notes)
                     {
                         (Note n, int octave) = note.ResolveNote(this.Tuning);
-                        var sampleProvider = drumKit.GetSampleProvider(n, octave);
+                        var sampleProvider = new NoteSampleProvider(n, octave, this.synth);
                         sampleProvider.DelayBy = (int)(samplesPerStep * note.timeRange.Start / (256 / 4));
                         sampleProvider.Duration = (int)(samplesPerStep * note.timeRange.Duration / (256 / 4));
                         sampleProvider.PlayingStateChanged += s => this.NotePlayingStateChanged?.Invoke(note, s);

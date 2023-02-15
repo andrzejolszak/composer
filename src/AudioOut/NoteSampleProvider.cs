@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Composer.Util;
 using MeltySynth;
 using NAudio.Wave;
 
@@ -10,14 +11,18 @@ namespace Composer.AudioOut
     {
         private int delayBy;
         private int position;
-        private readonly SampleSource sampleSource;
         private readonly Synthesizer _soundFontSynthesizer;
+        private readonly WaveFormat _waveFormat;
         private List<Voice> _voices;
+        private Note _note;
+        private readonly int _octave;
 
-        public NoteSampleProvider(SampleSource sampleSource)
+        public NoteSampleProvider(Note n, int octave, Synthesizer synth)
         {
-            this.sampleSource = sampleSource;
-            this._soundFontSynthesizer = this.sampleSource.SoundFontSynthesizer;
+            this._note = n;
+            this._octave = octave;
+            this._soundFontSynthesizer = synth;
+            this._waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(synth.SampleRate, synth.ChannelCount);
         }
 
         /// <summary>
@@ -41,7 +46,7 @@ namespace Composer.AudioOut
         /// </summary>
         public int Duration { get; set; }
 
-        public WaveFormat WaveFormat => sampleSource.SampleWaveFormat;
+        public WaveFormat WaveFormat => this._waveFormat;
 
         public int Read(float[] buffer, int offset, int count)
         {
@@ -98,8 +103,6 @@ namespace Composer.AudioOut
 
             return samplesWritten;
         }
-
-        private int PositionInSampleSource => (position - delayBy) + sampleSource.StartIndex;
 
         public bool IsPlaying { get; set; }
 
