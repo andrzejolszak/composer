@@ -25,14 +25,14 @@ namespace Composer.AudioOut
 
         public virtual WaveFormat WaveFormat { get; }
 
-        public MusicSampleProvider GetSampleProvider(Note note, int octave)
+        public NoteSampleProvider GetSampleProvider(Note note, int octave)
         {
             if (!sampleSources.TryGetValue(note.ToString().ToUpperInvariant() + octave, out SampleSource sampleSource))
             {
                 sampleSource = sampleSources["ERROR"];
             }
 
-            return new MusicSampleProvider(sampleSource);
+            return new NoteSampleProvider(sampleSource);
         }
     }
 }

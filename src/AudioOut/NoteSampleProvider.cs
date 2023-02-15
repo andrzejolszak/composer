@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MeltySynth;
 using NAudio.Wave;
 
 namespace Composer.AudioOut
 {
-    class MusicSampleProvider : ISampleProvider
+    class NoteSampleProvider : ISampleProvider
     {
         private int delayBy;
         private int position;
         private readonly SampleSource sampleSource;
         private readonly Synthesizer _soundFontSynthesizer;
+        private List<Voice> _voices;
 
-        public MusicSampleProvider(SampleSource sampleSource)
+        public NoteSampleProvider(SampleSource sampleSource)
         {
             this.sampleSource = sampleSource;
             this._soundFontSynthesizer = this.sampleSource.SoundFontSynthesizer;
@@ -63,7 +65,15 @@ namespace Composer.AudioOut
                     {
                         this.IsPlaying = false;
                         this.PlayingStateChanged?.Invoke(false);
-                        this._soundFontSynthesizer.NoteOff(0, 50);
+                        if (this._voices is not null)
+                        {
+                            foreach(Voice v in _voices)
+                            {
+                                this._soundFontSynthesizer.NoteOff(v);
+                            }
+
+                            this._voices = null;
+                        }
                     }
 
                     Array.Clear(buffer, samplesWritten, samplesToCopy);
@@ -74,7 +84,7 @@ namespace Composer.AudioOut
                     {
                         this.IsPlaying = true;
                         this.PlayingStateChanged?.Invoke(true);
-                        this._soundFontSynthesizer.NoteOn(0, 50, 100);
+                        this._voices = this._soundFontSynthesizer.NoteOn(0, 50, 100);
                     }
 
                     this._soundFontSynthesizer.RenderInterleaved(buffer.AsSpan(samplesWritten, samplesToCopy));

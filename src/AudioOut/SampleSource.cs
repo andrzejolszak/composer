@@ -35,7 +35,7 @@ namespace Composer.AudioOut
             SampleWaveFormat = waveFormat;
             StartIndex = startIndex;
             Length = length;
-            SoundFontSynthesizer = new Synthesizer("AudioOut/UGK_amped.sf2", 44100);
+            SoundFontSynthesizer = new Synthesizer("AudioOut/UGK_amped.sf2", new SynthesizerSettings(44100) { MaximumPolyphony = 128 });
         }
 
         /// <summary>

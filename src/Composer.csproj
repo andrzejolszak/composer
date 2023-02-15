@@ -46,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MeltySynth" Version="2.4.0" />
     <PackageReference Include="NAudio" Version="2.1.0" />
   </ItemGroup>
 
@@ -303,5 +302,9 @@
     <None Update="AudioOut\UGK_amped.sf2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AudioOut\MeltySynth\" />
   </ItemGroup>
 </Project>
