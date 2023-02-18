@@ -68,9 +68,9 @@ namespace Composer.AudioOut
                 int samplesNeeded = count - samplesWritten;
                 int samplesAvailable = _synth.BlockSize * 44100 - (position - delayBy);
                 int samplesToCopy = Math.Min(samplesNeeded, samplesAvailable);
-                if (Duration > 0 && position > delayBy + Duration)
+                if (Duration == 0 || position >= delayBy + Duration)
                 {
-                    if (this.IsPlaying)
+                    if (this.IsPlaying || Duration == 0)
                     {
                         this.IsPlaying = false;
                         this.PlayingStateChanged?.Invoke(false);

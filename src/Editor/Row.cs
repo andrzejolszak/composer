@@ -216,7 +216,8 @@ namespace Composer.Editor
                 var cursorStartY = this.trackSegments[cursorFirstTrack].layoutRect.yMin;
                 var cursorEndY = this.trackSegments[cursorLastTrack].layoutRect.yMax;
 
-                using (var pen = new Pen(Color.Blue, 3))
+                Brush brush = this.manager._audioOut is null ? Brushes.Blue : Brushes.IndianRed;
+                using (var pen = new Pen(this.manager._audioOut is null ? Color.Blue : Color.IndianRed, 3))
                 {
                     if (drawStart)
                     {
@@ -224,14 +225,14 @@ namespace Composer.Editor
                             cursorStartX, cursorStartY,
                             cursorStartX, cursorEndY);
 
-                        g.FillPolygon(Brushes.Blue, new PointF[]
+                        g.FillPolygon(brush, new PointF[]
                         {
                             new PointF(cursorStartX, cursorStartY + 7),
                             new PointF(cursorStartX, cursorStartY),
                             new PointF(cursorStartX + 7, cursorStartY)
                         });
 
-                        g.FillPolygon(Brushes.Blue, new PointF[]
+                        g.FillPolygon(brush, new PointF[]
                         {
                             new PointF(cursorStartX, cursorEndY - 7),
                             new PointF(cursorStartX, cursorEndY),
@@ -245,14 +246,14 @@ namespace Composer.Editor
                             cursorEndX, cursorStartY,
                             cursorEndX, cursorEndY);
 
-                        g.FillPolygon(Brushes.Blue, new PointF[]
+                        g.FillPolygon(brush, new PointF[]
                         {
                             new PointF(cursorEndX, cursorStartY + 7),
                             new PointF(cursorEndX, cursorStartY),
                             new PointF(cursorEndX - 7, cursorStartY)
                         });
 
-                        g.FillPolygon(Brushes.Blue, new PointF[]
+                        g.FillPolygon(brush, new PointF[]
                         {
                             new PointF(cursorEndX, cursorEndY - 7),
                             new PointF(cursorEndX, cursorEndY),

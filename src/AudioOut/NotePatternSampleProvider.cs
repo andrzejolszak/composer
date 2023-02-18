@@ -40,6 +40,7 @@ namespace Composer.AudioOut
             {
                 buffer[samplesRead++] = 0;
             }
+
             return samplesRead;
         }
     }

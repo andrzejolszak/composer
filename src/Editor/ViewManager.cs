@@ -1,12 +1,20 @@
-﻿using Composer.Project;
+﻿using Composer.AudioOut;
+using Composer.Project;
+using NAudio.Wave.SampleProviders;
+using NAudio.Wave;
 using System.Collections.Generic;
 using System.Drawing;
-
+using System.Windows.Forms;
+using MeltySynth;
+using System.IO;
+using System.Linq;
 
 namespace Composer.Editor
 {
     class ViewManager
     {
+        Dictionary<string, Synthesizer> _kits = new Dictionary<string, Synthesizer>();
+
         ControlEditor control;
         public Project.Project project;
         public List<Row> rows;
@@ -36,7 +44,8 @@ namespace Composer.Editor
         public Element currentHoverElement;
         public InteractableRegion currentHoverRegion;
         public InteractableRegion currentDraggingIsolatedRegion;
-
+        internal WaveOut _audioOut;
+        private FretboardNote _lastNote;
 
         public ViewManager(ControlEditor control, Project.Project project)
         {
@@ -44,6 +53,17 @@ namespace Composer.Editor
             this.project = project;
             this.rows = new List<Row>();
             this.elements = new List<Element>();
+
+            foreach (string s in Directory.GetFiles("AudioOut").Where(x => x.EndsWith("sf2")))
+            {
+                string name = s.Split(Path.DirectorySeparatorChar).Last();
+                for (int i = 0; i < 16; i++)
+                {
+                    this._kits[name + "/" + i] = new Synthesizer(new SoundFont(s), new SynthesizerSettings(44100) { MaximumPolyphony = 128 }, defaultChannel: i);
+                }
+            }
+
+            cursorVisible = true;
         }
 
 
@@ -52,13 +72,6 @@ namespace Composer.Editor
             this.width = width;
             this.height = height;
         }
-
-
-        public void SetCursorVisible(bool visible)
-        {
-            this.cursorVisible = visible;
-        }
-
 
         public void SetCursorTimeRange(float time1, float time2)
         {
@@ -210,6 +223,8 @@ namespace Composer.Editor
 
             foreach (var element in this.elements)
                 element.RefreshLayout();
+
+            this.control.Invalidate();
         }
 
 
@@ -248,6 +263,197 @@ namespace Composer.Editor
                 System.Math.Min(this.layoutRect.yMax - this.height + 30, y));
         }
 
+        public bool OnKeyPress(Keys keyData)
+        {
+            var ctrlKey = (keyData & Keys.Control) != 0;
+            var shiftKey = (keyData & Keys.Shift) != 0;
+
+            keyData = (keyData & ~(Keys.Control | Keys.Shift));
+
+            if (keyData == Keys.Z ||
+                keyData == Keys.X || keyData == Keys.C ||
+                keyData == Keys.V || keyData == Keys.B || keyData == Keys.N ||
+                keyData == Keys.M ||
+                keyData == Keys.S || keyData == Keys.D ||
+                keyData == Keys.G || keyData == Keys.H || keyData == Keys.J)
+            {
+                int trackIndex;
+                float time;
+                if (this.GetInsertionPosition(out trackIndex, out time))
+                {
+                    var relativePitch = Util.Note.C;
+                    if (keyData == Keys.Z) relativePitch = Util.Note.C;
+                    if (keyData == Keys.S) relativePitch = Util.Note.Cs;
+                    if (keyData == Keys.X) relativePitch = Util.Note.D;
+                    if (keyData == Keys.D) relativePitch = Util.Note.Ds;
+                    if (keyData == Keys.C) relativePitch = Util.Note.E;
+                    if (keyData == Keys.V) relativePitch = Util.Note.F;
+                    if (keyData == Keys.G) relativePitch = Util.Note.Fs;
+                    if (keyData == Keys.B) relativePitch = Util.Note.G;
+                    if (keyData == Keys.H) relativePitch = Util.Note.Gs;
+                    if (keyData == Keys.N) relativePitch = Util.Note.A;
+                    if (keyData == Keys.J) relativePitch = Util.Note.As;
+                    if (keyData == Keys.M) relativePitch = Util.Note.B;
+
+                    this.InsertPitchedNote(trackIndex, time, 256 / 4, ((int)relativePitch) % 6, 5);
+                }
+
+                return true;
+            }
+            else if (keyData == Keys.Up)
+            {
+                this.OnPressUp(ctrlKey, shiftKey);
+                return true;
+            }
+            else if (keyData == Keys.Down)
+            {
+                this.OnPressDown(ctrlKey, shiftKey);
+                return true;
+            }
+            else if (keyData == Keys.Right)
+            {
+                this.OnPressRight(ctrlKey, shiftKey);
+                var currentNote = this.GetNoteInsertionModeNote();
+                if (currentNote != null)
+                    this.SetCursorTimeRange(currentNote.timeRange.End, currentNote.timeRange.End);
+
+                return true;
+            }
+            else if (keyData == Keys.Left)
+            {
+                this.OnPressLeft(ctrlKey, shiftKey);
+                var currentNote = this.GetNoteInsertionModeNote();
+                if (currentNote != null)
+                    this.SetCursorTimeRange(currentNote.timeRange.End, currentNote.timeRange.End);
+
+                return true;
+            }
+            else if (keyData == Keys.Return)
+            {
+                this.UnselectAll();
+                return true;
+            }
+            else if (keyData == Keys.F5)
+            {
+                this.Rebuild();
+                return true;
+            }
+            else if (keyData == Keys.Space)
+            {
+                this.ExecuteAudioJob();
+            }
+
+            return false;
+        }
+
+        private void InsertPitchedNote(int trackIndex, float time, float duration, int stringNo, int fret)
+        {
+            this.UnselectAll();
+
+            var note = new Project.FretboardNote
+            {
+                StringNo = stringNo,
+                Fret = fret,
+                timeRange = new Util.TimeRange(time, duration)
+            };
+
+            this.project.InsertPitchedNote(trackIndex, note);
+
+            this.Rebuild();
+            this.SetPitchedNoteSelection(trackIndex, note, true);
+            this.SetNoteInsertionMode(true);
+            this.SetCursorTimeRange(time + duration, time + duration);
+        }
+
+        public void ExecuteAudioJob()
+        {
+            lock (this)
+            {
+                if (this._audioOut is not null)
+                {
+                    if (this._audioOut.PlaybackState == PlaybackState.Playing)
+                    {
+                        this._audioOut.Pause();
+                    }
+                    else
+                    {
+                        this._audioOut.Resume();
+                    }
+
+                    return;
+                }
+
+                this._audioOut = new WaveOut();
+                this._audioOut.Volume = 1;
+
+                List<NotePatternSampleProvider> trackSequencers = new List<NotePatternSampleProvider>();
+
+                foreach (TrackFretboardNotes track in this.project.tracks)
+                {
+                    NotePattern pattern = new NotePattern();
+                    foreach (FretboardNote note in track.notes)
+                    {
+                        pattern.Add((int)(note.timeRange.Start / (256 / 4)), note);
+
+                        if (this._lastNote is null || this._lastNote.timeRange.End < note.timeRange.End)
+                        {
+                            this._lastNote = note;
+                        }
+                    }
+
+                    NotePatternSampleProvider patternSequencer = new NotePatternSampleProvider(this._kits[track.KitName], pattern, false, track.Tuning);
+                    patternSequencer.Tempo = 90;
+
+                    patternSequencer.Sequencer.NotePlayingStateChanged += Sequencer_NotePlayingStateChanged;
+
+                    trackSequencers.Add(patternSequencer);
+                }
+
+                this._lastNote = new FretboardNote() { Fret = 0, StringNo = 0, timeRange = new Util.TimeRange(this._lastNote.timeRange.End, 0) };
+                trackSequencers.Last().Sequencer.Pattern.Add((int)(this._lastNote.timeRange.Start / (256 / 4)), this._lastNote);
+
+                this._audioOut.Init(new MixingSampleProvider(trackSequencers));
+                this._audioOut.PlaybackStopped += (s, e) =>
+                {
+                    lock (this)
+                    {
+                        this._audioOut.Volume = 0;
+                        this._audioOut.Dispose();
+                        this._audioOut = null;
+                        this.control.Invalidate();
+                    }
+                };
+
+                this._audioOut.Play();
+
+                this.control.Invalidate();
+            }
+        }
+
+        private void Sequencer_NotePlayingStateChanged(FretboardNote note, bool isPlaying)
+        {
+            lock (this)
+            {
+                if (note == this._lastNote)
+                {
+                    this._audioOut?.Stop();
+
+                    this.SetCursorTimeRange(0, 0);
+
+                    this.Refresh();
+                    return;
+                }
+
+                if (!isPlaying)
+                {
+                    return;
+                }
+
+                this.SetCursorTimeRange(note.timeRange.Start + note.timeRange.Duration / 2, note.timeRange.Start + note.timeRange.Duration / 2);
+
+                this.Refresh();
+            }
+        }
 
         public void OnPressUp(bool ctrlKey, bool shiftKey)
         {
@@ -270,7 +476,6 @@ namespace Composer.Editor
             else
             {
                 this.SetCursorTimeRange(this.cursorTime1 + this.TimeSnap, this.cursorTime2 + this.TimeSnap);
-                this.SetCursorVisible(true);
             }
         }
 
@@ -282,7 +487,6 @@ namespace Composer.Editor
             else
             {
                 this.SetCursorTimeRange(this.cursorTime1 - this.TimeSnap, this.cursorTime2 - this.TimeSnap);
-                this.SetCursorVisible(true);
             }
         }
 

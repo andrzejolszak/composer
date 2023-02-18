@@ -11,10 +11,10 @@ namespace Composer.Editor
         public ViewManager viewManager;
 
 
-        public ControlEditor(FormMain owner)
+        public ControlEditor(FormMain owner, Project.Project project)
         {
             this.ownerFormMain = owner;
-            this.viewManager = new ViewManager(this, owner.currentProject);
+            this.viewManager = new ViewManager(this, project);
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);

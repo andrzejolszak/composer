@@ -11,7 +11,7 @@ namespace Composer.AudioOut
 {
     class PatternSequencer
     {
-        private readonly NotePattern drumPattern;
+        public readonly NotePattern Pattern;
         private readonly Synthesizer synth;
         private int tempo;
         private int samplesPerStep;
@@ -19,7 +19,7 @@ namespace Composer.AudioOut
         public PatternSequencer(NotePattern drumPattern, Synthesizer synth, Tuning tuning)
         {
             this.synth = synth;
-            this.drumPattern = drumPattern;
+            this.Pattern = drumPattern;
             Tempo = 120;
             Tuning = tuning;
         }
@@ -60,7 +60,7 @@ namespace Composer.AudioOut
             while (samplePos < sampleCount)
             {
                 double offsetFromCurrent = (currentStep - patternPosition);
-                if (offsetFromCurrent < 0) offsetFromCurrent += drumPattern.Steps;
+                if (offsetFromCurrent < 0) offsetFromCurrent += Pattern.Steps;
                 int delayForThisStep = (int)(samplesPerStep * offsetFromCurrent);
                 if (delayForThisStep >= sampleCount)
                 {
@@ -68,7 +68,7 @@ namespace Composer.AudioOut
                     break;
                 }
 
-                if (drumPattern.Pattern.TryGetValue(currentStep, out HashSet<FretboardNote> notes))
+                if (Pattern.Pattern.TryGetValue(currentStep, out HashSet<FretboardNote> notes))
                 {
                     foreach (FretboardNote note in notes)
                     {
@@ -85,19 +85,19 @@ namespace Composer.AudioOut
 
                 samplePos += samplesPerStep;
                 currentStep++;
-                if (!this.Loop && currentStep >= drumPattern.Steps)
+                if (!this.Loop && currentStep >= Pattern.Steps)
                 {
                     break;
                 }
 
-                currentStep = currentStep % drumPattern.Steps;
+                currentStep = currentStep % Pattern.Steps;
 
             }
 
             patternPosition += ((double)sampleCount / samplesPerStep);
-            if (patternPosition > drumPattern.Steps)
+            if (patternPosition > Pattern.Steps)
             {
-                patternPosition -= drumPattern.Steps;
+                patternPosition -= Pattern.Steps;
             }
 
             return mixerInputs;
