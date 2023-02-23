@@ -1,4 +1,6 @@
-﻿namespace Composer.Util
+﻿using System;
+
+namespace Composer.Util
 {
     public struct TimeRange
     {
@@ -42,9 +44,13 @@
 
         public TimeRange OffsetBy(float amount)
         {
-            return new TimeRange(this.start + amount, this.Duration);
+            return new TimeRange(Math.Max(amount, this.start + amount), this.Duration);
         }
 
+        public TimeRange AddDuration(float amount)
+        {
+            return new TimeRange(this.start, System.Math.Max(amount, this.Duration + amount));
+        }
 
         public bool Overlaps(float time)
         {

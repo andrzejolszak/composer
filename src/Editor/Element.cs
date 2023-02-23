@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-
+using System.Windows.Forms;
 
 namespace Composer.Editor
 {
@@ -9,7 +9,7 @@ namespace Composer.Editor
         public ViewManager manager;
         public List<InteractableRegion> interactableRegions;
 
-        public bool Selected { get; protected set; }
+        public bool Highlighted { get; protected set; }
 
         public Element(ViewManager manager)
         {
@@ -17,9 +17,9 @@ namespace Composer.Editor
         }
 
 
-        public virtual void SetSelected(bool isSelected)
+        public virtual void SetHighlighted(bool isSelected)
         {
-            this.Selected = isSelected;
+            this.Highlighted = isSelected;
         }
 
         public virtual void RefreshLayout()
@@ -34,11 +34,18 @@ namespace Composer.Editor
         }
 
 
-        public virtual void EndModify()
+        public virtual bool EndModify()
         {
-
+            return false;
         }
 
+        public virtual void OnPressKeyPreview(Keys keyData)
+        {
+            var ctrlKey = (keyData & Keys.Control) != 0;
+            var shiftKey = (keyData & Keys.Shift) != 0;
+
+            keyData = (keyData & ~(Keys.Control | Keys.Shift));
+        }
 
         public virtual void OnPressUp(bool ctrlKey, bool shiftKey)
         {

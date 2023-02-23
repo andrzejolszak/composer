@@ -63,8 +63,29 @@ namespace Composer
             split.SplitterDistance = 200;
             editor.Rebuild();
             Refresh();
+
+            this.KeyDown += FormMain_KeyDown;
+            this.KeyUp += FormMain_KeyUp;
+            this.KeyPreview = true;
         }
 
+        private void FormMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (this.editor.OnKey(e.KeyData, false))
+            {
+                this.Invalidate();
+                e.Handled = true;
+            }
+        }
+
+        private void FormMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (this.editor.OnKey(e.KeyData, true))
+            {
+                this.Invalidate();
+                e.Handled = true;
+            }
+        }
 
         protected override void OnClosed(EventArgs e)
         {
@@ -72,9 +93,12 @@ namespace Composer
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (this.editor.OnKeyPress(keyData))
+            if (keyData == Keys.Up || keyData == Keys.Down ||
+                keyData == Keys.Left || keyData == Keys.Right)
             {
-                this.editorControl.Refresh();
+                object sender = Control.FromHandle(msg.HWnd);
+                KeyEventArgs e = new KeyEventArgs(keyData);
+                FormMain_KeyDown(sender, e);
                 return true;
             }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Composer.Editor
 {
@@ -13,6 +14,7 @@ namespace Composer.Editor
         private TimeRange _timeRange;
         private Rect _rect;
         private ElementFretboardNote _targetNote;
+        private bool _ctrlKey;
 
         public ElementCaret(
             ViewManager manager)
@@ -24,12 +26,12 @@ namespace Composer.Editor
             this._trackIndex = 0;
             this._timeRange = new TimeRange(manager.project.BarDuration / 4, manager.project.BarDuration / 4);
 
-            this.Selected = true;
+            this.Highlighted = true;
         }
 
-        public override void SetSelected(bool isSelected)
+        public override void SetHighlighted(bool isSelected)
         {
-            this.Selected = true;
+            this.Highlighted = true;
         }
 
         public override void RefreshLayout()
@@ -71,13 +73,25 @@ namespace Composer.Editor
         }
 
 
-        public override void EndModify()
+        public override bool EndModify()
         {
-            this._targetNote.SetSelected(false);
+            ElementFretboardNote prevNote = this._targetNote;
+            
             this.UpdateCurrentPositionSelection();
-            this._targetNote.SetSelected(true);
+            
+            prevNote?.SetHighlighted(false);
+            this._targetNote?.SetHighlighted(true);
+
+            this.manager.Refresh();
+
+            return true;
         }
 
+
+        public override void OnPressKeyPreview(Keys keyData)
+        {
+            this._ctrlKey = (keyData & Keys.Control) != 0;
+        }
 
         public override void OnPressUp(bool ctrlKey, bool shiftKey)
         {
@@ -86,6 +100,10 @@ namespace Composer.Editor
             {
                 this._trackIndex--;
                 this._stringIndex = 0;
+            }
+            else if (this._targetNote is not null && ctrlKey)
+            {
+                this._targetNote.Note.StringNo = this._stringIndex;
             }
         }
 
@@ -98,18 +116,52 @@ namespace Composer.Editor
                 this._trackIndex++;
                 this._stringIndex = 5;
             }
+            else if (this._targetNote is not null && ctrlKey)
+            {
+                this._targetNote.Note.StringNo = this._stringIndex;
+            }
         }
 
 
         public override void OnPressRight(bool ctrlKey, bool shiftKey)
         {
-            this._timeRange = this._timeRange.OffsetBy(this.manager.TimeSnap);
+            if (ctrlKey && this._targetNote is not null)
+            {
+                if (shiftKey)
+                {
+                    this._targetNote.Note.timeRange = this._targetNote.Note.timeRange.AddDuration(this.manager.TimeSnap);
+                }
+                else
+                {
+                    this._targetNote.Note.timeRange = this._targetNote.Note.timeRange.OffsetBy(this.manager.TimeSnap);
+                    this._timeRange = this._timeRange.OffsetBy(this.manager.TimeSnap);
+                }
+            }
+            else
+            {
+                this._timeRange = this._timeRange.OffsetBy(this.manager.TimeSnap);
+            }
         }
 
 
         public override void OnPressLeft(bool ctrlKey, bool shiftKey)
         {
-            this._timeRange = this._timeRange.OffsetBy(-this.manager.TimeSnap);
+            if (ctrlKey && this._targetNote is not null)
+            {
+                if (shiftKey)
+                {
+                    this._targetNote.Note.timeRange = this._targetNote.Note.timeRange.AddDuration(-this.manager.TimeSnap);
+                }
+                else
+                {
+                    this._targetNote.Note.timeRange = this._targetNote.Note.timeRange.OffsetBy(-this.manager.TimeSnap);
+                    this._timeRange = this._timeRange.OffsetBy(-this.manager.TimeSnap);
+                }
+            }
+            else
+            {
+                this._timeRange = this._timeRange.OffsetBy(-this.manager.TimeSnap);
+            }
         }
 
 
@@ -121,7 +173,7 @@ namespace Composer.Editor
             }
 
             g.DrawRectangle(
-                Pens.Magenta,
+                this._ctrlKey ? Pens.DarkMagenta : Pens.Magenta,
                 this._rect.xMin,
                 this._rect.yMin,
                 this._rect.xSize,
@@ -130,6 +182,7 @@ namespace Composer.Editor
 
         private void UpdateCurrentPositionSelection()
         {
+            this._targetNote = null;
             TrackSegmentFretboardNotes caretSegment = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is TrackSegmentFretboardNotes) as TrackSegmentFretboardNotes;
             foreach (var element in this.manager.elements)
             {

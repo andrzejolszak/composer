@@ -56,11 +56,13 @@ namespace Composer.Editor
         }
 
 
-        public override void EndModify()
+        public override bool EndModify()
         {
             this.projectMeterChange.time = this.time;
 
             this.manager.project.InsertMeterChange(this.projectMeterChange);
+
+            return true;
         }
 
 
@@ -82,7 +84,7 @@ namespace Composer.Editor
                 (this.time - this.row.timeRange.Start) * this.manager.TimeToPixelsMultiplier);
 
             using (var pen = new Pen(
-                Selected ? Color.DarkCyan :
+                Highlighted ? Color.DarkCyan :
                 hovering ? Color.Aquamarine : Color.MediumAquamarine,
                 3))
             {
@@ -91,7 +93,7 @@ namespace Composer.Editor
                     x, (int)this.row.contentRect.yMax);
 
                 g.FillRectangle(
-                    Selected ? Brushes.DarkCyan :
+                    Highlighted ? Brushes.DarkCyan :
                     hovering ? Brushes.Aquamarine : Brushes.MediumAquamarine,
                     x - HANDLE_WIDTH / 2, (int)this.row.trackSegmentMeterChanges.contentRect.yMin,
                     HANDLE_WIDTH, HANDLE_HEIGHT);

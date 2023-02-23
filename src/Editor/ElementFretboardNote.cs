@@ -72,27 +72,6 @@ namespace Composer.Editor
                 new InteractableRegion(InteractableRegion.CursorKind.MoveAll, noteRect));
         }
 
-
-        public override void BeginModify()
-        {
-            this.manager.project.RemovePitchedNote(
-                this.manager.project.GetTrackIndex(this.projectTrackPitchedNode),
-                this.Note);
-        }
-
-
-        public override void EndModify()
-        {
-            this.Note.timeRange = this._timeRange;
-            this.Note.StringNo = this._stringNo;
-            this.Note.Fret = this._fret;
-
-            this.manager.project.InsertPitchedNote(
-                this.manager.project.GetTrackIndex(this.projectTrackPitchedNode),
-                this.Note);
-        }
-
-
         public override void Drag()
         {
             this._timeRange =
@@ -101,49 +80,6 @@ namespace Composer.Editor
             this._stringNo = (int)Math.Round(
                 this.Note.StringNo + this.manager.DragMidiPitchOffset);
         }
-
-
-        public override void OnPressUp(bool ctrlKey, bool shiftKey)
-        {
-            this._stringNo++;
-        }
-
-
-        public override void OnPressDown(bool ctrlKey, bool shiftKey)
-        {
-            this._stringNo--;
-        }
-
-
-        public override void OnPressRight(bool ctrlKey, bool shiftKey)
-        {
-            if (shiftKey)
-            {
-                this._timeRange.Duration =
-                    System.Math.Max(
-                        this.manager.TimeSnap,
-                        this._timeRange.Duration + this.manager.TimeSnap);
-            }
-            else
-                this._timeRange =
-                    this._timeRange.OffsetBy(this.manager.TimeSnap);
-        }
-
-
-        public override void OnPressLeft(bool ctrlKey, bool shiftKey)
-        {
-            if (shiftKey)
-            {
-                this._timeRange.Duration =
-                    System.Math.Max(
-                        this.manager.TimeSnap,
-                        this._timeRange.Duration - this.manager.TimeSnap);
-            }
-            else
-                this._timeRange =
-                    this._timeRange.OffsetBy(-this.manager.TimeSnap);
-        }
-
 
         public override void Draw(Graphics g, bool hovering)
         {
@@ -156,7 +92,7 @@ namespace Composer.Editor
                     segment.noteRect.xSize - 13,
                     segment.noteRect.ySize - 1);
                 
-                if (Selected)
+                if (Highlighted)
                 {
                     g.DrawRectangle(
                         Pens.Salmon,
