@@ -5,17 +5,17 @@ using System.Drawing;
 
 namespace Composer.Editor
 {
-    class TrackSegmentFretboardNotes : TrackSegment
+    class EditorNotesTrackAspect : AbstractEditorTrackAspect
     {
-        public List<Project.TrackFretboardNotes> projectTracks;
+        public List<Project.FretboardNotesTrack> projectTracks;
 
         const float LAYOUT_MARGIN = 4;
 
 
-        public TrackSegmentFretboardNotes(
-            ViewManager manager,
-            Row row,
-            List<Project.TrackFretboardNotes> projectTracks)
+        public EditorNotesTrackAspect(
+            EditorViewManager manager,
+            EditorTrack row,
+            List<Project.FretboardNotesTrack> projectTracks)
             : base(manager, row)
         {
             this.projectTracks = projectTracks;

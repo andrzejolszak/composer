@@ -4,15 +4,19 @@ using System.Collections.Generic;
 
 namespace Composer.Project
 {
-    public class TrackFretboardNotes : Track
+    public class FretboardNotesTrack
     {
+        public string name;
+
+        public bool visible = true;
+
         public Tuning Tuning { get; }
 
         public Util.TimeRangeSortedList<FretboardNote> notes;
 
         public string KitName { get; private set; }
 
-        public TrackFretboardNotes(string name, Tuning tuning, string kitName)
+        public FretboardNotesTrack(string name, Tuning tuning, string kitName)
         {
             this.name = name;
             this.Tuning = tuning;
@@ -33,7 +37,7 @@ namespace Composer.Project
             this.notes.Remove(pitchedNote);
         }
 
-        public override void CutRange(Util.TimeRange timeRange)
+        public void CutRange(Util.TimeRange timeRange)
         {
             this.notes.RemoveOverlappingRange(timeRange);
             foreach (var note in this.notes.EnumerateEntirelyAfter(timeRange.End))

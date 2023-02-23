@@ -3,15 +3,15 @@
 
 namespace Composer.Editor
 {
-    abstract class TrackSegment
+    abstract class AbstractEditorTrackAspect
     {
-        public ViewManager manager;
-        public Row row;
+        public EditorViewManager manager;
+        public EditorTrack row;
         public Util.Rect layoutRect;
         public Util.Rect contentRect;
 
 
-        public TrackSegment(ViewManager manager, Row row)
+        public AbstractEditorTrackAspect(EditorViewManager manager, EditorTrack row)
         {
             this.manager = manager;
             this.row = row;

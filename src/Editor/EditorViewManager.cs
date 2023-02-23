@@ -11,34 +11,34 @@ using System.Linq;
 
 namespace Composer.Editor
 {
-    class ViewManager
+    class EditorViewManager
     {
         Dictionary<string, Synthesizer> _kits = new Dictionary<string, Synthesizer>();
 
         ControlEditor control;
         public Project.Project project;
-        public List<Row> rows;
-        public List<Element> elements;
+        public List<EditorTrack> rows;
+        public List<AbstractEditorElement> elements;
 
         float width, height;
         float scrollX, scrollY;
         Util.Rect layoutRect;
 
         public bool cursorVisible;
-        private ElementCaret _elementCaret;
+        private EditorCaret _elementCaret;
         public float cursorTime1, cursorTime2;
         public int cursorTrack1, cursorTrack2;
         public bool noteInsertionMode;
-        public Element currentHoverElement;
+        public AbstractEditorElement currentHoverElement;
         internal WaveOut _audioOut;
         private FretboardNote _lastNote;
 
-        public ViewManager(ControlEditor control, Project.Project project)
+        public EditorViewManager(ControlEditor control, Project.Project project)
         {
             this.control = control;
             this.project = project;
-            this.rows = new List<Row>();
-            this.elements = new List<Element>();
+            this.rows = new List<EditorTrack>();
+            this.elements = new List<AbstractEditorElement>();
 
             foreach (string s in Directory.GetFiles("AudioOut").Where(x => x.EndsWith("sf2")))
             {
@@ -51,7 +51,7 @@ namespace Composer.Editor
 
             cursorVisible = true;
 
-            this._elementCaret = new ElementCaret(this);
+            this._elementCaret = new EditorCaret(this);
         }
 
 
@@ -92,7 +92,7 @@ namespace Composer.Editor
                 return false;
 
             var trackSegment = this.rows[0].trackSegments[this.cursorTrack1];
-            var trackSegmentPitchedNotes = trackSegment as TrackSegmentFretboardNotes;
+            var trackSegmentPitchedNotes = trackSegment as EditorNotesTrackAspect;
             if (trackSegmentPitchedNotes != null)
             {
                 trackIndex = this.project.GetTrackIndex(trackSegmentPitchedNotes.projectTracks[0]);
@@ -129,25 +129,25 @@ namespace Composer.Editor
                 }
 
                 foreach (var meterChange in this.project.meterChanges)
-                    this.elements.Add(new ElementMeterChange(this, meterChange));
+                    this.elements.Add(new EditorMeterChange(this, meterChange));
 
-                foreach (TrackFretboardNotes track in this.project.tracks)
+                foreach (FretboardNotesTrack track in this.project.tracks)
                 {
-                    var row = new Row(this, new Util.TimeRange(currentTime, endTime - currentTime), isLastRow, track.Tuning);
+                    var row = new EditorTrack(this, new Util.TimeRange(currentTime, endTime - currentTime), isLastRow, track.Tuning);
 
                     if (!track.visible)
                         continue;
 
-                    var seg = new TrackSegmentFretboardNotes(
+                    var seg = new EditorNotesTrackAspect(
                         this, row,
-                        new List<TrackFretboardNotes> { track });
+                        new List<FretboardNotesTrack> { track });
                     row.trackSegments.Add(seg);
 
                     this.rows.Add(row);
 
                     foreach (var note in track.notes)
                     {
-                        var element = new ElementFretboardNote(this, track, seg, note);
+                        var element = new EditorNote(this, track, seg, note);
                         this.elements.Add(element);
                     }
                 }
@@ -312,7 +312,7 @@ namespace Composer.Editor
 
                 List<NotePatternSampleProvider> trackSequencers = new List<NotePatternSampleProvider>();
 
-                foreach (TrackFretboardNotes track in this.project.tracks)
+                foreach (FretboardNotesTrack track in this.project.tracks)
                 {
                     NotePattern pattern = new NotePattern();
                     foreach (FretboardNote note in track.notes)
@@ -407,7 +407,7 @@ namespace Composer.Editor
         }
 
 
-        public bool ModifySelected(System.Action<Element> func)
+        public bool ModifySelected(System.Action<AbstractEditorElement> func)
         {
             this._elementCaret.BeginModify();
             func(this._elementCaret);
@@ -430,7 +430,7 @@ namespace Composer.Editor
         }
 
 
-        public Row GetRowOverlapping(float time)
+        public EditorTrack GetRowOverlapping(float time)
         {
             foreach (var row in this.rows)
             {
@@ -442,7 +442,7 @@ namespace Composer.Editor
         }
 
 
-        public IEnumerable<Row> EnumerateRowsInTimeRange(Util.TimeRange timeRange)
+        public IEnumerable<EditorTrack> EnumerateRowsInTimeRange(Util.TimeRange timeRange)
         {
             foreach (var row in this.rows)
             {
@@ -452,7 +452,7 @@ namespace Composer.Editor
         }
 
 
-        public TrackSegment GetTrackSegmentAtPosition(float x, float y)
+        public AbstractEditorTrackAspect GetTrackSegmentAtPosition(float x, float y)
         {
             foreach (var row in this.rows)
             {

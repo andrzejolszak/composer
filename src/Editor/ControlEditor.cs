@@ -8,13 +8,13 @@ namespace Composer.Editor
     class ControlEditor : Control
     {
         FormMain ownerFormMain;
-        public ViewManager viewManager;
+        public EditorViewManager viewManager;
 
 
         public ControlEditor(FormMain owner, Project.Project project)
         {
             this.ownerFormMain = owner;
-            this.viewManager = new ViewManager(this, project);
+            this.viewManager = new EditorViewManager(this, project);
 
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);

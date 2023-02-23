@@ -7,17 +7,17 @@ using System.Windows.Forms;
 
 namespace Composer.Editor
 {
-    class ElementCaret : Element
+    class EditorCaret : AbstractEditorElement
     {
         int _stringIndex;
         private int _trackIndex;
         private TimeRange _timeRange;
         private Rect _rect;
-        private ElementFretboardNote _targetNote;
+        private EditorNote _targetNote;
         private bool _ctrlKey;
 
-        public ElementCaret(
-            ViewManager manager)
+        public EditorCaret(
+            EditorViewManager manager)
             : base(manager)
         {
             this._stringIndex = 1;
@@ -35,7 +35,7 @@ namespace Composer.Editor
         public override void RefreshLayout()
         {
             // TODO: segments
-            TrackSegmentFretboardNotes trackPitchedNotes = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is TrackSegmentFretboardNotes) as TrackSegmentFretboardNotes;
+            EditorNotesTrackAspect trackPitchedNotes = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is EditorNotesTrackAspect) as EditorNotesTrackAspect;
 
             if (trackPitchedNotes is null)
             {
@@ -69,7 +69,7 @@ namespace Composer.Editor
 
         public override bool EndModify()
         {
-            ElementFretboardNote prevNote = this._targetNote;
+            EditorNote prevNote = this._targetNote;
             
             this.UpdateCurrentPositionSelection();
             
@@ -177,10 +177,10 @@ namespace Composer.Editor
         private void UpdateCurrentPositionSelection()
         {
             this._targetNote = null;
-            TrackSegmentFretboardNotes caretSegment = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is TrackSegmentFretboardNotes) as TrackSegmentFretboardNotes;
+            EditorNotesTrackAspect caretSegment = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is EditorNotesTrackAspect) as EditorNotesTrackAspect;
             foreach (var element in this.manager.elements)
             {
-                var note = element as ElementFretboardNote;
+                var note = element as EditorNote;
                 if (note != null && note.Note.StringNo == this._stringIndex && note.Note.timeRange.Start == this._timeRange.Start && note.trackPitchedNote == caretSegment)
                 {
                     this._targetNote = note;

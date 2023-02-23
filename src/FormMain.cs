@@ -18,7 +18,7 @@ namespace Composer
     {
         public Project.Project currentProject;
         public Editor.ControlEditor editorControl;
-        public Editor.ViewManager editor;
+        public Editor.EditorViewManager editor;
 
         public FormMain(Project.Project project)
         {

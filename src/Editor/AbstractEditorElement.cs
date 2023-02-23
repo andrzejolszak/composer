@@ -4,13 +4,13 @@ using System.Windows.Forms;
 
 namespace Composer.Editor
 {
-    abstract class Element
+    abstract class AbstractEditorElement
     {
-        public ViewManager manager;
+        public EditorViewManager manager;
 
         public bool Highlighted { get; protected set; }
 
-        public Element(ViewManager manager)
+        public AbstractEditorElement(EditorViewManager manager)
         {
             this.manager = manager;
         }

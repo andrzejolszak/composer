@@ -8,14 +8,14 @@ namespace Composer.Project
         float length;
         public Util.TimeSortedList<SectionBreak> sectionBreaks;
         public Util.TimeSortedList<MeterChange> meterChanges;
-        public List<Track> tracks;
+        public List<FretboardNotesTrack> tracks;
 
         public Project(float startingLength)
         {
             this.length = startingLength;
             this.sectionBreaks = new Util.TimeSortedList<SectionBreak>(sb => sb.time);
             this.meterChanges = new Util.TimeSortedList<MeterChange>(mc => mc.time);
-            this.tracks = new List<Track>();
+            this.tracks = new List<FretboardNotesTrack>();
         }
 
 
@@ -31,7 +31,7 @@ namespace Composer.Project
         }
 
 
-        public int GetTrackIndex(Track track)
+        public int GetTrackIndex(FretboardNotesTrack track)
         {
             return this.tracks.FindIndex(tr => tr == track);
         }
@@ -71,14 +71,14 @@ namespace Composer.Project
             if (pitchedNote.timeRange.Duration <= 0)
                 return;
 
-            var track = (TrackFretboardNotes)this.tracks[trackIndex];
+            var track = (FretboardNotesTrack)this.tracks[trackIndex];
             track.InsertPitchedNote(pitchedNote);
         }
 
 
         public void RemovePitchedNote(int trackIndex, FretboardNote pitchedNote)
         {
-            var track = (TrackFretboardNotes)this.tracks[trackIndex];
+            var track = (FretboardNotesTrack)this.tracks[trackIndex];
             track.RemovePitchedNote(pitchedNote);
         }
 

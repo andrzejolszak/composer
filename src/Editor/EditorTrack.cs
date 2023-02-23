@@ -5,15 +5,15 @@ using System.Drawing;
 
 namespace Composer.Editor
 {
-    class Row
+    class EditorTrack
     {
-        ViewManager manager;
+        EditorViewManager manager;
         public Util.TimeRange timeRange;
         public Util.Rect layoutRect;
         public Util.Rect contentRect;
 
-        public TrackSegmentMeterChanges trackSegmentMeterChanges;
-        public List<TrackSegment> trackSegments;
+        public EditorTrackMeterChangesAspect trackSegmentMeterChanges;
+        public List<AbstractEditorTrackAspect> trackSegments;
 
         public bool isLastRow;
         public Tuning tuning;
@@ -24,16 +24,16 @@ namespace Composer.Editor
         const int ADD_SECTION_BUTTON_MARGIN = 2;
 
 
-        public Row(ViewManager manager, Util.TimeRange timeRange, bool isLastRow, Tuning tuning)
+        public EditorTrack(EditorViewManager manager, Util.TimeRange timeRange, bool isLastRow, Tuning tuning)
         {
             this.manager = manager;
             this.timeRange = timeRange;
             this.resizeEndTime = timeRange.End;
-            this.trackSegments = new List<TrackSegment>();
+            this.trackSegments = new List<AbstractEditorTrackAspect>();
             this.isLastRow = isLastRow;
             this.tuning = tuning;
 
-            this.trackSegmentMeterChanges = new TrackSegmentMeterChanges(manager, this);
+            this.trackSegmentMeterChanges = new EditorTrackMeterChangesAspect(manager, this);
             this.trackSegments.Add(this.trackSegmentMeterChanges);
         }
 

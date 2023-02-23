@@ -4,14 +4,14 @@ using System.Drawing;
 
 namespace Composer.Editor
 {
-    class TrackSegmentMeterChanges : TrackSegment
+    class EditorTrackMeterChangesAspect : AbstractEditorTrackAspect
     {
         public List<Project.MeterChange> affectingMeterChanges;
 
 
-        public TrackSegmentMeterChanges(
-            ViewManager manager,
-            Row row)
+        public EditorTrackMeterChangesAspect(
+            EditorViewManager manager,
+            EditorTrack row)
             : base(manager, row)
         {
             this.affectingMeterChanges = new List<Project.MeterChange>();
@@ -29,7 +29,7 @@ namespace Composer.Editor
                 x,
                 y,
                 x + this.row.timeRange.Duration * this.manager.TimeToPixelsMultiplier,
-                y + ElementMeterChange.HANDLE_HEIGHT + 2);
+                y + EditorMeterChange.HANDLE_HEIGHT + 2);
 
             this.contentRect = this.layoutRect.Clone();
         }

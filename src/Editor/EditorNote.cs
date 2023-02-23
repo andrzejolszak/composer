@@ -5,22 +5,22 @@ using System.Drawing;
 
 namespace Composer.Editor
 {
-    class ElementFretboardNote : Element
+    class EditorNote : AbstractEditorElement
     {
         public Project.FretboardNote Note;
-        public Project.TrackFretboardNotes projectTrackPitchedNode;
+        public Project.FretboardNotesTrack projectTrackPitchedNode;
         List<Segment> segments;
 
         Util.TimeRange _timeRange;
         int _stringNo;
         int _fret;
         private (Util.Note, int) _resolvedNote;
-        public TrackSegmentFretboardNotes trackPitchedNote;
+        public EditorNotesTrackAspect trackPitchedNote;
 
-        public ElementFretboardNote(
-            ViewManager manager,
-            Project.TrackFretboardNotes projectTrackPitchedNode,
-            TrackSegmentFretboardNotes trackPitchedNote,
+        public EditorNote(
+            EditorViewManager manager,
+            Project.FretboardNotesTrack projectTrackPitchedNode,
+            EditorNotesTrackAspect trackPitchedNote,
             Project.FretboardNote pitchedNote)
             : base(manager)
         {

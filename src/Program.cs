@@ -14,9 +14,9 @@ namespace Composer
             Application.SetCompatibleTextRenderingDefault(false);
 
             var project = new Project.Project(256 * 4);
-            project.tracks.Add(new Project.TrackFretboardNotes("Guitar 1", Tuning.Standard, "UGK_amped.sf2/0"));
-            project.tracks.Add(new Project.TrackFretboardNotes("Guitar 2", Tuning.Standard, "Billy_bass.sf2/0"));
-            project.tracks.Add(new Project.TrackFretboardNotes("Bass", Tuning.BassStandard, "Billy_bass.sf2/1"));
+            project.tracks.Add(new Project.FretboardNotesTrack("Guitar 1", Tuning.Standard, "UGK_amped.sf2/0"));
+            project.tracks.Add(new Project.FretboardNotesTrack("Guitar 2", Tuning.Standard, "Billy_bass.sf2/0"));
+            project.tracks.Add(new Project.FretboardNotesTrack("Bass", Tuning.BassStandard, "Billy_bass.sf2/1"));
 
             project.InsertMeterChange(new Project.MeterChange(0, new Meter(4, 4)));
             project.InsertMeterChange(new Project.MeterChange(256 * 3, new Meter(3, 4)));

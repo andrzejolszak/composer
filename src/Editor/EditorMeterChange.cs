@@ -4,19 +4,19 @@ using System.Drawing;
 
 namespace Composer.Editor
 {
-    class ElementMeterChange : Element
+    class EditorMeterChange : AbstractEditorElement
     {
         Project.MeterChange projectMeterChange;
 
-        Row row;
+        EditorTrack row;
         float time;
 
         public const int HANDLE_WIDTH = 10;
         public const int HANDLE_HEIGHT = 16;
 
 
-        public ElementMeterChange(
-            ViewManager manager,
+        public EditorMeterChange(
+            EditorViewManager manager,
             Project.MeterChange projectMeterChange)
             : base(manager)
         {
