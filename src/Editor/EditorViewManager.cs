@@ -117,43 +117,32 @@ namespace Composer.Editor
             this.elements.Add(this._elementCaret);
 
             var currentTime = 0f;
-            var currentSegment = 0;
-            while (currentSegment <= this.project.sectionBreaks.Count)
+            var endTime = this.project.Length;
+            var isLastRow = true;
+
+            foreach (FretboardNotesTrack track in this.project.tracks)
             {
-                var endTime = this.project.Length;
-                var isLastRow = true;
-                if (currentSegment < this.project.sectionBreaks.Count)
-                {
-                    endTime = this.project.sectionBreaks[currentSegment].time;
-                    isLastRow = false;
-                }
+                var row = new EditorTrack(this, new Util.TimeRange(currentTime, endTime - currentTime), isLastRow, track.Tuning);
+
+                if (!track.visible)
+                    continue;
 
                 foreach (var meterChange in this.project.meterChanges)
-                    this.elements.Add(new EditorMeterChange(this, meterChange));
+                    this.elements.Add(new EditorMeterChange(this, meterChange, row));
 
-                foreach (FretboardNotesTrack track in this.project.tracks)
+                var seg = new EditorNotesTrackAspect(
+                    this, row,
+                    new List<FretboardNotesTrack> { track });
+
+                row.trackSegments.Add(seg);
+
+                this.rows.Add(row);
+
+                foreach (var note in track.notes)
                 {
-                    var row = new EditorTrack(this, new Util.TimeRange(currentTime, endTime - currentTime), isLastRow, track.Tuning);
-
-                    if (!track.visible)
-                        continue;
-
-                    var seg = new EditorNotesTrackAspect(
-                        this, row,
-                        new List<FretboardNotesTrack> { track });
-                    row.trackSegments.Add(seg);
-
-                    this.rows.Add(row);
-
-                    foreach (var note in track.notes)
-                    {
-                        var element = new EditorNote(this, track, seg, note);
-                        this.elements.Add(element);
-                    }
+                    var element = new EditorNote(this, track, seg, note);
+                    this.elements.Add(element);
                 }
-
-                currentTime = endTime;
-                currentSegment++;
             }
 
             this.SetCursorTimeRange(this.cursorTime1, this.cursorTime2);

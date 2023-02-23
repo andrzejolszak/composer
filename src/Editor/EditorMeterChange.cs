@@ -10,18 +10,19 @@ namespace Composer.Editor
 
         EditorTrack row;
         float time;
-
         public const int HANDLE_WIDTH = 10;
         public const int HANDLE_HEIGHT = 16;
 
 
         public EditorMeterChange(
             EditorViewManager manager,
-            Project.MeterChange projectMeterChange)
+            Project.MeterChange projectMeterChange,
+            EditorTrack track)
             : base(manager)
         {
             this.projectMeterChange = projectMeterChange;
             this.time = projectMeterChange.time;
+            this.row = track;
         }
 
 
@@ -29,18 +30,14 @@ namespace Composer.Editor
         {
             var tMult = this.manager.TimeToPixelsMultiplier;
 
-            this.row = this.manager.GetRowOverlapping(this.time);
-            if (this.row != null)
-            {
-                var track = this.row.trackSegmentMeterChanges;
-                var timeMinusTrackStart = this.time - this.row.timeRange.Start;
+            var track = this.row.trackSegmentMeterChanges;
+            var timeMinusTrackStart = this.time - this.row.timeRange.Start;
 
-                var handleRect = new Util.Rect(
-                    track.layoutRect.xMin + tMult * timeMinusTrackStart - HANDLE_WIDTH / 2,
-                    track.layoutRect.yMin,
-                    track.layoutRect.xMin + tMult * timeMinusTrackStart + HANDLE_WIDTH / 2,
-                    track.layoutRect.yMax);
-            }
+            var handleRect = new Util.Rect(
+                track.layoutRect.xMin + tMult * timeMinusTrackStart - HANDLE_WIDTH / 2,
+                track.layoutRect.yMin,
+                track.layoutRect.xMin + tMult * timeMinusTrackStart + HANDLE_WIDTH / 2,
+                track.layoutRect.yMax);
         }
 
 

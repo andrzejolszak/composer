@@ -37,14 +37,6 @@ namespace Composer.Project
             this.notes.Remove(pitchedNote);
         }
 
-        public void CutRange(Util.TimeRange timeRange)
-        {
-            this.notes.RemoveOverlappingRange(timeRange);
-            foreach (var note in this.notes.EnumerateEntirelyAfter(timeRange.End))
-                note.timeRange = note.timeRange.OffsetBy(-timeRange.Duration);
-        }
-
-
         public void EraseRange(Util.TimeRange timeRange, int? onlyAtString = null)
         {
             this.notes.RemoveOverlappingRange(timeRange,
