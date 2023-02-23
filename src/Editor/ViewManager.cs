@@ -43,8 +43,6 @@ namespace Composer.Editor
         public int cursorTrack1, cursorTrack2;
         public bool noteInsertionMode;
         public Element currentHoverElement;
-        public InteractableRegion currentHoverRegion;
-        public InteractableRegion currentDraggingIsolatedRegion;
         internal WaveOut _audioOut;
         private FretboardNote _lastNote;
 
@@ -440,17 +438,11 @@ namespace Composer.Editor
             {
                 if (this.mouseAction == MouseAction.Selection)
                 {
-                    if (this.currentHoverRegion != null && this.currentHoverRegion.isolated)
-                        this.currentHoverRegion.dragFunc?.Invoke(this.currentHoverRegion);
-                    else
+                    foreach (var element in this.elements)
                     {
-                        foreach (var element in this.elements)
+                        if (element.Highlighted)
                         {
-                            if (element.Highlighted)
-                            {
-                                element.Drag();
-                                element.RefreshLayout();
-                            }
+                            element.RefreshLayout();
                         }
                     }
                 }
@@ -474,54 +466,6 @@ namespace Composer.Editor
                     this.SetCursorTimeRange(this.cursorTime1, timeSnapped);
                     this.SetCursorTrackIndices(this.cursorTrack1, track);
                 }
-            }
-            else
-            {
-                var lastHoverRegion = this.currentHoverRegion;
-
-                this.currentHoverElement = null;
-                this.currentHoverRegion = null;
-
-                foreach (var element in this.elements)
-                {
-                    foreach (var region in element.interactableRegions)
-                    {
-                        if (region.rect.Contains(x + scrollX, y + scrollY))
-                        {
-                            this.currentHoverElement = element;
-                            this.currentHoverRegion = region;
-                        }
-                    }
-                }
-
-                foreach (var row in this.rows)
-                {
-                    foreach (var region in row.interactableRegions)
-                    {
-                        if (region.rect.Contains(x + scrollX, y + scrollY))
-                        {
-                            this.currentHoverElement = null;
-                            this.currentHoverRegion = region;
-                        }
-                    }
-                }
-
-                if (this.currentHoverRegion != null)
-                {
-                    switch (this.currentHoverRegion.cursorKind)
-                    {
-                        case InteractableRegion.CursorKind.Select:
-                            this.control.Cursor = System.Windows.Forms.Cursors.Hand; break;
-                        case InteractableRegion.CursorKind.MoveAll:
-                            this.control.Cursor = System.Windows.Forms.Cursors.UpArrow; break;
-                        case InteractableRegion.CursorKind.MoveHorizontal:
-                            this.control.Cursor = System.Windows.Forms.Cursors.SizeWE; break;
-                        default:
-                            this.control.Cursor = System.Windows.Forms.Cursors.Default; break;
-                    }
-                }
-                else
-                    this.control.Cursor = System.Windows.Forms.Cursors.Default;
             }
         }
 
@@ -555,12 +499,7 @@ namespace Composer.Editor
                     this.GetTrackSegmentAtPosition(this.mouseDragOriginX, this.mouseDragOriginY).
                     GetStringAtPosition(this.mouseDragOriginY);
                 
-                if (this.currentHoverRegion != null && this.currentHoverRegion.isolated)
-                {
-                    this.currentDraggingIsolatedRegion = this.currentHoverRegion;
-                    this.currentDraggingIsolatedRegion.dragStartFunc?.Invoke(this.currentDraggingIsolatedRegion);
-                }
-                else if (!ctrlKey && !shiftKey && this.currentHoverRegion == null)
+                if (!ctrlKey && !shiftKey)
                 {
                     this.mouseAction = MouseAction.Cursor;
                     this.SetCursorTimeRange(timeSnapped, timeSnapped);
@@ -577,20 +516,7 @@ namespace Composer.Editor
 
             if (this.mouseAction == MouseAction.Selection)
             {
-                if (this.currentDraggingIsolatedRegion != null)
-                {
-                    this.currentDraggingIsolatedRegion.dragEndFunc?.Invoke(this.currentDraggingIsolatedRegion);
-
-                    if (this.currentHoverRegion == this.currentDraggingIsolatedRegion)
-                        this.currentDraggingIsolatedRegion.clickFunc?.Invoke(this.currentDraggingIsolatedRegion);
-
-                    this.currentDraggingIsolatedRegion = null;
-                }
-                else
-                {
-                    this.ModifySelected((elem) => { });
-                }
-
+                this.ModifySelected((elem) => { });
                 this.Rebuild();
             }
         }

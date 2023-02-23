@@ -21,15 +21,12 @@ namespace Composer.Editor
             : base(manager)
         {
             this.projectMeterChange = projectMeterChange;
-            this.interactableRegions = new List<InteractableRegion>();
             this.time = projectMeterChange.time;
         }
 
 
         public override void RefreshLayout()
         {
-            this.interactableRegions.Clear();
-
             var tMult = this.manager.TimeToPixelsMultiplier;
 
             this.row = this.manager.GetRowOverlapping(this.time);
@@ -43,9 +40,6 @@ namespace Composer.Editor
                     track.layoutRect.yMin,
                     track.layoutRect.xMin + tMult * timeMinusTrackStart + HANDLE_WIDTH / 2,
                     track.layoutRect.yMax);
-
-                this.interactableRegions.Add(
-                    new InteractableRegion(InteractableRegion.CursorKind.MoveHorizontal, handleRect));
             }
         }
 
@@ -64,16 +58,6 @@ namespace Composer.Editor
 
             return true;
         }
-
-
-        public override void Drag()
-        {
-            this.time =
-                System.Math.Max(0,
-                System.Math.Min(this.manager.project.Length,
-                this.projectMeterChange.time + this.manager.DragTimeOffsetClampedToRow));
-        }
-
 
         public override void Draw(Graphics g, bool hovering)
         {

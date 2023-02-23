@@ -11,7 +11,6 @@ namespace Composer.Editor
         public Util.TimeRange timeRange;
         public Util.Rect layoutRect;
         public Util.Rect contentRect;
-        public List<InteractableRegion> interactableRegions;
 
         public TrackSegmentMeterChanges trackSegmentMeterChanges;
         public List<TrackSegment> trackSegments;
@@ -19,10 +18,6 @@ namespace Composer.Editor
         public bool isLastRow;
         public Tuning tuning;
         public float resizeEndTime;
-
-        InteractableRegion regionResizeHandle;
-        InteractableRegion regionAddSectionBeforeButton;
-        InteractableRegion regionAddSectionAfterButton;
 
         const int SECTION_HANDLE_HEIGHT = 16;
         const int ADD_SECTION_BUTTON_SIZE = 20;
@@ -35,7 +30,6 @@ namespace Composer.Editor
             this.timeRange = timeRange;
             this.resizeEndTime = timeRange.End;
             this.trackSegments = new List<TrackSegment>();
-            this.interactableRegions = new List<InteractableRegion>();
             this.isLastRow = isLastRow;
             this.tuning = tuning;
 
@@ -64,41 +58,6 @@ namespace Composer.Editor
             }
 
             this.layoutRect.yMax += ADD_SECTION_BUTTON_MARGIN;
-
-            this.interactableRegions.Clear();
-
-            this.regionAddSectionBeforeButton = new InteractableRegion(
-                InteractableRegion.CursorKind.Select,
-                new Util.Rect(
-                    this.layoutRect.xMin,
-                    this.layoutRect.yMin + ADD_SECTION_BUTTON_MARGIN,
-                    this.layoutRect.xMin + ADD_SECTION_BUTTON_SIZE,
-                    this.layoutRect.yMin + ADD_SECTION_BUTTON_MARGIN + ADD_SECTION_BUTTON_SIZE));
-            this.regionAddSectionBeforeButton.SetButton(this.Click_AddSectionBefore);
-            this.interactableRegions.Add(this.regionAddSectionBeforeButton);
-
-            if (this.isLastRow)
-            {
-                this.regionAddSectionAfterButton = new InteractableRegion(
-                    InteractableRegion.CursorKind.Select,
-                    new Util.Rect(
-                        this.layoutRect.xMin,
-                        this.layoutRect.yMax + ADD_SECTION_BUTTON_MARGIN,
-                        this.layoutRect.xMin + ADD_SECTION_BUTTON_SIZE,
-                        this.layoutRect.yMax + ADD_SECTION_BUTTON_MARGIN + ADD_SECTION_BUTTON_SIZE));
-                this.regionAddSectionAfterButton.SetButton(this.Click_AddSectionAfter);
-                this.interactableRegions.Add(this.regionAddSectionAfterButton);
-            }
-
-            this.regionResizeHandle = new InteractableRegion(
-                InteractableRegion.CursorKind.MoveHorizontal,
-                new Util.Rect(
-                    this.layoutRect.xMax - 5,
-                    this.layoutRect.yMin + ADD_SECTION_BUTTON_SIZE + ADD_SECTION_BUTTON_MARGIN * 2,
-                    this.layoutRect.xMax + 5,
-                    this.layoutRect.yMin + ADD_SECTION_BUTTON_SIZE + ADD_SECTION_BUTTON_MARGIN * 2 + 10));
-            this.regionResizeHandle.SetIsolated(null, this.Drag_SectionHandle, this.DragEnd_SectionHandle);
-            this.interactableRegions.Add(this.regionResizeHandle);
         }
 
 
@@ -106,42 +65,6 @@ namespace Composer.Editor
         {
             return this.timeRange.Start + (x - this.layoutRect.xMin) / this.manager.TimeToPixelsMultiplier;
         }
-
-
-        public void Drag_SectionHandle(InteractableRegion region)
-        {
-            this.resizeEndTime = System.Math.Max(
-                this.timeRange.Start,
-                this.timeRange.End + this.manager.DragTimeOffsetIrrespectiveOfRow);
-        }
-
-
-        public void DragEnd_SectionHandle(InteractableRegion region)
-        {
-            if (this.resizeEndTime >= this.timeRange.Start &&
-                this.resizeEndTime != this.timeRange.End)
-            {
-                if (this.resizeEndTime < this.timeRange.End)
-                    this.manager.project.CutRange(
-                        Util.TimeRange.StartEnd(this.resizeEndTime, this.timeRange.End));
-            }
-            this.manager.Rebuild();
-        }
-
-
-        public void Click_AddSectionBefore(InteractableRegion region)
-        {
-            this.manager.project.InsertSection(this.timeRange.Start, this.manager.project.BarDuration * 4);
-            this.manager.Rebuild();
-        }
-
-
-        public void Click_AddSectionAfter(InteractableRegion region)
-        {
-            this.manager.project.InsertSection(this.timeRange.End, this.manager.project.BarDuration * 4);
-            this.manager.Rebuild();
-        }
-
 
         public void Draw(Graphics g)
         {
@@ -177,19 +100,6 @@ namespace Composer.Editor
                         (int)this.layoutRect.ySize - ADD_SECTION_BUTTON_SIZE - ADD_SECTION_BUTTON_MARGIN * 2);
                 }
             }
-
-            this.DrawResizeHandle(g,
-                this.manager.currentDraggingIsolatedRegion == this.regionResizeHandle,
-                this.manager.currentHoverRegion == this.regionResizeHandle);
-
-            this.DrawAddSectionButton(g, this.layoutRect.xMin, this.layoutRect.yMin + ADD_SECTION_BUTTON_MARGIN,
-                this.manager.currentDraggingIsolatedRegion == this.regionAddSectionBeforeButton,
-                this.manager.currentHoverRegion == this.regionAddSectionBeforeButton);
-
-            if (this.isLastRow)
-                this.DrawAddSectionButton(g, this.layoutRect.xMin, this.layoutRect.yMax + ADD_SECTION_BUTTON_MARGIN,
-                    this.manager.currentDraggingIsolatedRegion == this.regionAddSectionAfterButton,
-                    this.manager.currentHoverRegion == this.regionAddSectionAfterButton);
 
             this.DrawCursor(g);
         }

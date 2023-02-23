@@ -7,7 +7,6 @@ namespace Composer.Editor
     abstract class Element
     {
         public ViewManager manager;
-        public List<InteractableRegion> interactableRegions;
 
         public bool Highlighted { get; protected set; }
 
@@ -69,13 +68,6 @@ namespace Composer.Editor
         {
 
         }
-
-
-        public virtual void Drag()
-        {
-
-        }
-
 
         public virtual void Draw(Graphics g, bool hovering)
         {

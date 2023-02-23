@@ -26,7 +26,6 @@ namespace Composer.Editor
         {
             this.projectTrackPitchedNode = projectTrackPitchedNode;
             this.Note = pitchedNote;
-            this.interactableRegions = new List<InteractableRegion>();
             this.segments = new List<Segment>();
 
             this._timeRange = this.Note.timeRange;
@@ -47,7 +46,6 @@ namespace Composer.Editor
         public override void RefreshLayout()
         {
             this.segments.Clear();
-            this.interactableRegions.Clear();
 
             var tMult = this.manager.TimeToPixelsMultiplier;
             var pMult = this.manager.PitchedNoteHeight;
@@ -67,18 +65,6 @@ namespace Composer.Editor
                 trackPitchedNote.contentRect.yMax - pMult * _stringNo);
 
             this.segments.Add(new Segment { noteRect = noteRect });
-
-            this.interactableRegions.Add(
-                new InteractableRegion(InteractableRegion.CursorKind.MoveAll, noteRect));
-        }
-
-        public override void Drag()
-        {
-            this._timeRange =
-                this.Note.timeRange.OffsetBy(this.manager.DragTimeOffsetClampedToRow);
-
-            this._stringNo = (int)Math.Round(
-                this.Note.StringNo + this.manager.DragMidiPitchOffset);
         }
 
         public override void Draw(Graphics g, bool hovering)

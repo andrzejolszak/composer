@@ -20,8 +20,6 @@ namespace Composer.Editor
             ViewManager manager)
             : base(manager)
         {
-            this.interactableRegions = new List<InteractableRegion>();
-
             this._stringIndex = 1;
             this._trackIndex = 0;
             this._timeRange = new TimeRange(manager.project.BarDuration / 4, manager.project.BarDuration / 4);
@@ -36,8 +34,6 @@ namespace Composer.Editor
 
         public override void RefreshLayout()
         {
-            this.interactableRegions.Clear();
-
             // TODO: segments
             TrackSegmentFretboardNotes trackPitchedNotes = this.manager.rows[this._trackIndex].trackSegments.SingleOrDefault(x => x is TrackSegmentFretboardNotes) as TrackSegmentFretboardNotes;
 
@@ -62,8 +58,6 @@ namespace Composer.Editor
                 trackPitchedNotes.contentRect.yMax - pMult * (_stringIndex + 1),
                 trackPitchedNotes.contentRect.xMin + tMult * endTimeMinusTrackStart,
                 trackPitchedNotes.contentRect.yMax - pMult * _stringIndex);
-
-            this.interactableRegions.Add(new InteractableRegion(InteractableRegion.CursorKind.MoveAll, this._rect));
         }
 
 
