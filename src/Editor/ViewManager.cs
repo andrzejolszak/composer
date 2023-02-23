@@ -38,6 +38,7 @@ namespace Composer.Editor
         int pitchDragOrigin;
 
         public bool cursorVisible;
+        private ElementCaret _elementCaret;
         public float cursorTime1, cursorTime2;
         public int cursorTrack1, cursorTrack2;
         public bool noteInsertionMode;
@@ -64,6 +65,8 @@ namespace Composer.Editor
             }
 
             cursorVisible = true;
+
+            this._elementCaret = new ElementCaret(this);
         }
 
 
@@ -129,7 +132,7 @@ namespace Composer.Editor
 
             foreach (var element in this.elements)
             {
-                if (element.selected)
+                if (element.Selected)
                 {
                     var note = element as ElementFretboardNote;
                     if (note != null)
@@ -148,7 +151,7 @@ namespace Composer.Editor
 
             foreach (var element in this.elements)
             {
-                if (element.selected)
+                if (element.Selected)
                 {
                     var elementPitchedNote = element as ElementFretboardNote;
                     if (elementPitchedNote != null)
@@ -158,6 +161,8 @@ namespace Composer.Editor
 
             this.rows.Clear();
             this.elements.Clear();
+
+            this.elements.Add(this._elementCaret);
 
             var currentTime = 0f;
             var currentSegment = 0;
@@ -183,7 +188,7 @@ namespace Composer.Editor
 
                     var seg = new TrackSegmentFretboardNotes(
                         this, row,
-                        new List<Project.TrackFretboardNotes> { track });
+                        new List<TrackFretboardNotes> { track });
                     row.trackSegments.Add(seg);
 
                     this.rows.Add(row);
@@ -191,7 +196,7 @@ namespace Composer.Editor
                     foreach (var note in track.notes)
                     {
                         var element = new ElementFretboardNote(this, track, seg, note);
-                        element.selected = previouslySelectedPitchedNotes.Contains(note);
+                        element.SetSelected(previouslySelectedPitchedNotes.Contains(note));
                         this.elements.Add(element);
                     }
                 }
@@ -231,7 +236,7 @@ namespace Composer.Editor
         public void UnselectAll()
         {
             foreach (var element in this.elements)
-                element.selected = false;
+                element.SetSelected(false);
         }
 
 
@@ -246,7 +251,7 @@ namespace Composer.Editor
                 {
                     if (note.projectTrackPitchedNode == projectTrack &&
                         note.Note == pitchedNote)
-                        note.selected = selected;
+                        note.SetSelected(selected);
                 }
             }
         }
@@ -493,30 +498,31 @@ namespace Composer.Editor
 
         public bool ModifySelected(System.Action<Element> func)
         {
-            var anySelected = false;
+            this._elementCaret.BeginModify();
+            func(this._elementCaret);
+            this._elementCaret.EndModify();
 
-            foreach (var element in this.elements)
+            List<Element> modified = new List<Element>();
+            foreach (var element in this.elements.Where(x => x != this._elementCaret))
             {
-                if (element.selected)
-                    element.BeginModify();
-            }
-
-            foreach (var element in this.elements)
-            {
-                if (element.selected)
+                if (element.Selected)
                 {
-                    anySelected = true;
-                    func(element);
+                    element.BeginModify();
+                    modified.Add(element);
                 }
             }
 
-            foreach (var element in this.elements)
+            foreach (var element in modified)
             {
-                if (element.selected)
-                    element.EndModify();
+                func(element);
             }
 
-            return anySelected;
+            foreach (var element in modified)
+            {
+                element.EndModify();
+            }
+
+            return modified.Count > 0;
         }
 
 
@@ -535,7 +541,7 @@ namespace Composer.Editor
                     {
                         foreach (var element in this.elements)
                         {
-                            if (element.selected)
+                            if (element.Selected)
                             {
                                 element.Drag();
                                 element.RefreshLayout();
@@ -629,12 +635,12 @@ namespace Composer.Editor
                 this.mouseAction = MouseAction.Selection;
                 this.cursorVisible = false;
 
-                if ((!ctrlKey && (this.currentHoverElement == null || !this.currentHoverElement.selected)) ||
+                if ((!ctrlKey && (this.currentHoverElement == null || !this.currentHoverElement.Selected)) ||
                     this.currentHoverRegion != null && this.currentHoverRegion.isolated)
                     UnselectAll();
 
                 if (this.currentHoverElement != null)
-                    this.currentHoverElement.selected = true;
+                    this.currentHoverElement.SetSelected(true);
 
                 this.timeDragOrigin =
                     this.GetTimeAtPosition(this.mouseDragOriginX, this.mouseDragOriginY, true);
@@ -697,7 +703,7 @@ namespace Composer.Editor
                 row.Draw(g);
 
             foreach (var element in this.elements)
-                element.Draw(g, currentHoverElement == element, element.selected);
+                element.Draw(g, currentHoverElement == element);
 
             foreach (var row in this.rows)
                 row.DrawOverlay(g);

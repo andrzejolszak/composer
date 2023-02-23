@@ -15,7 +15,7 @@ namespace Composer.Editor
         int _stringNo;
         int _fret;
         private (Util.Note, int) _resolvedNote;
-        private TrackSegmentFretboardNotes trackPitchedNote;
+        public TrackSegmentFretboardNotes trackPitchedNote;
 
         public ElementFretboardNote(
             ViewManager manager,
@@ -145,7 +145,7 @@ namespace Composer.Editor
         }
 
 
-        public override void Draw(Graphics g, bool hovering, bool selected)
+        public override void Draw(Graphics g, bool hovering)
         {
             foreach (var segment in this.segments)
             {
@@ -156,7 +156,7 @@ namespace Composer.Editor
                     segment.noteRect.xSize - 13,
                     segment.noteRect.ySize - 1);
                 
-                if (selected)
+                if (Selected)
                 {
                     g.DrawRectangle(
                         Pens.Salmon,

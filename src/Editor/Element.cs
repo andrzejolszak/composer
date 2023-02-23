@@ -9,14 +9,18 @@ namespace Composer.Editor
         public ViewManager manager;
         public List<InteractableRegion> interactableRegions;
 
-        public bool selected;
-
+        public bool Selected { get; protected set; }
 
         public Element(ViewManager manager)
         {
             this.manager = manager;
         }
 
+
+        public virtual void SetSelected(bool isSelected)
+        {
+            this.Selected = isSelected;
+        }
 
         public virtual void RefreshLayout()
         {
@@ -66,7 +70,7 @@ namespace Composer.Editor
         }
 
 
-        public virtual void Draw(Graphics g, bool hovering, bool selected)
+        public virtual void Draw(Graphics g, bool hovering)
         {
 
         }

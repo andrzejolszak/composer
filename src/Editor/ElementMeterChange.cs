@@ -73,7 +73,7 @@ namespace Composer.Editor
         }
 
 
-        public override void Draw(Graphics g, bool hovering, bool selected)
+        public override void Draw(Graphics g, bool hovering)
         {
             if (this.row == null)
                 return;
@@ -82,7 +82,7 @@ namespace Composer.Editor
                 (this.time - this.row.timeRange.Start) * this.manager.TimeToPixelsMultiplier);
 
             using (var pen = new Pen(
-                selected ? Color.DarkCyan :
+                Selected ? Color.DarkCyan :
                 hovering ? Color.Aquamarine : Color.MediumAquamarine,
                 3))
             {
@@ -91,7 +91,7 @@ namespace Composer.Editor
                     x, (int)this.row.contentRect.yMax);
 
                 g.FillRectangle(
-                    selected ? Brushes.DarkCyan :
+                    Selected ? Brushes.DarkCyan :
                     hovering ? Brushes.Aquamarine : Brushes.MediumAquamarine,
                     x - HANDLE_WIDTH / 2, (int)this.row.trackSegmentMeterChanges.contentRect.yMin,
                     HANDLE_WIDTH, HANDLE_HEIGHT);
