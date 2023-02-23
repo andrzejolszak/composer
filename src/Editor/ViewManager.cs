@@ -24,19 +24,6 @@ namespace Composer.Editor
         float scrollX, scrollY;
         Util.Rect layoutRect;
 
-        enum MouseAction
-        {
-            Selection, Cursor, Scrolling
-        }
-
-        bool mouseIsDown;
-        MouseAction mouseAction;
-        float mouseCurrentX, mouseCurrentY;
-        float mouseDragOriginX, mouseDragOriginY;
-        float timeDragOrigin;
-        int trackDragOrigin;
-        int pitchDragOrigin;
-
         public bool cursorVisible;
         private ElementCaret _elementCaret;
         public float cursorTime1, cursorTime2;
@@ -428,100 +415,6 @@ namespace Composer.Editor
             return wasModified;
         }
 
-
-        public void OnMouseMove(float x, float y)
-        {
-            this.mouseCurrentX = x + scrollX;
-            this.mouseCurrentY = y + scrollY;
-
-            if (this.mouseIsDown)
-            {
-                if (this.mouseAction == MouseAction.Selection)
-                {
-                    foreach (var element in this.elements)
-                    {
-                        if (element.Highlighted)
-                        {
-                            element.RefreshLayout();
-                        }
-                    }
-                }
-                else if (this.mouseAction == MouseAction.Scrolling)
-                {
-                    var deltaX = this.mouseDragOriginX - this.mouseCurrentX;
-                    var deltaY = this.mouseDragOriginY - this.mouseCurrentY;
-
-                    this.ScrollTo(this.scrollX + deltaX, this.scrollY + deltaY);
-
-                    this.mouseCurrentX = this.mouseDragOriginX = x + scrollX;
-                    this.mouseCurrentY = this.mouseDragOriginY = y + scrollY;
-                }
-                else if (this.mouseAction == MouseAction.Cursor)
-                {
-                    var track = this.GetTrackIndexAtPosition(this.mouseCurrentX, this.mouseCurrentY);
-
-                    var time = this.GetTimeAtPosition(this.mouseCurrentX, this.mouseCurrentY, true);
-                    var timeSnapped = (float)(System.Math.Round(time / TimeSnap) * TimeSnap);
-
-                    this.SetCursorTimeRange(this.cursorTime1, timeSnapped);
-                    this.SetCursorTrackIndices(this.cursorTrack1, track);
-                }
-            }
-        }
-
-
-        public void OnMouseDown(bool scroll, float x, float y, bool ctrlKey, bool shiftKey)
-        {
-            this.mouseIsDown = true;
-            this.mouseDragOriginX = x + scrollX;
-            this.mouseDragOriginY = y + scrollY;
-            this.noteInsertionMode = false;
-
-            if (scroll)
-                this.mouseAction = MouseAction.Scrolling;
-            else
-            {
-                this.mouseAction = MouseAction.Selection;
-                this.cursorVisible = false;
-
-                if (this.currentHoverElement != null)
-                    this.currentHoverElement.SetHighlighted(true);
-
-                this.timeDragOrigin =
-                    this.GetTimeAtPosition(this.mouseDragOriginX, this.mouseDragOriginY, true);
-
-                this.trackDragOrigin =
-                    this.GetTrackIndexAtPosition(this.mouseDragOriginX, this.mouseDragOriginY);
-
-                var timeSnapped = (float)(System.Math.Round(this.timeDragOrigin / TimeSnap) * TimeSnap);
-
-                this.pitchDragOrigin =
-                    this.GetTrackSegmentAtPosition(this.mouseDragOriginX, this.mouseDragOriginY).
-                    GetStringAtPosition(this.mouseDragOriginY);
-                
-                if (!ctrlKey && !shiftKey)
-                {
-                    this.mouseAction = MouseAction.Cursor;
-                    this.SetCursorTimeRange(timeSnapped, timeSnapped);
-                    this.SetCursorTrackIndices(this.trackDragOrigin, this.trackDragOrigin);
-                    this.cursorVisible = true;
-                }
-            }
-        }
-
-
-        public void OnMouseUp(float x, float y)
-        {
-            this.mouseIsDown = false;
-
-            if (this.mouseAction == MouseAction.Selection)
-            {
-                this.ModifySelected((elem) => { });
-                this.Rebuild();
-            }
-        }
-
-
         public void Draw(Graphics g)
         {
             g.TranslateTransform(-scrollX, -scrollY);
@@ -697,78 +590,6 @@ namespace Composer.Editor
             get
             {
                 return System.Math.Max(this.cursorTrack1, this.cursorTrack2);
-            }
-        }
-
-
-        public float MouseTime
-        {
-            get
-            {
-                var time = this.GetTimeAtPosition(this.mouseCurrentX, this.mouseCurrentY, false);
-                return (float)(System.Math.Round(time / TimeSnap) * TimeSnap);
-            }
-        }
-
-
-        public float MouseTimeClampedToRow
-        {
-            get
-            {
-                var time = this.GetTimeAtPosition(this.mouseCurrentX, this.mouseCurrentY, true);
-                return (float)(System.Math.Round(time / TimeSnap) * TimeSnap);
-            }
-        }
-
-
-        public float DragTimeOffsetIrrespectiveOfRow
-        {
-            get
-            {
-                var offset =
-                    (this.mouseCurrentX - this.mouseDragOriginX) / this.TimeToPixelsMultiplier;
-
-                return (float)(System.Math.Round(offset / TimeSnap) * TimeSnap);
-            }
-        }
-
-
-        public float DragTimeOffset
-        {
-            get
-            {
-                var offset =
-                    this.GetTimeAtPosition(this.mouseCurrentX, this.mouseCurrentY, false) -
-                    this.timeDragOrigin;
-
-                return (float)(System.Math.Round(offset / TimeSnap) * TimeSnap);
-            }
-        }
-
-
-        public float DragTimeOffsetClampedToRow
-        {
-            get
-            {
-                var offset =
-                    this.GetTimeAtPosition(this.mouseCurrentX, this.mouseCurrentY, true) -
-                    this.timeDragOrigin;
-
-                return (float)(System.Math.Round(offset / TimeSnap) * TimeSnap);
-            }
-        }
-
-
-        public float DragMidiPitchOffset
-        {
-            get
-            {
-                var pitchAtMouse =
-                    this.GetTrackSegmentAtPosition(this.mouseCurrentX, this.mouseCurrentY)
-                    .GetStringAtPosition(this.mouseCurrentY);
-
-                var offset = - pitchAtMouse + this.pitchDragOrigin;
-                return (float)offset;
             }
         }
     }

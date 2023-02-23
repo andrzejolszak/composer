@@ -35,31 +35,6 @@ namespace Composer.Editor
             this.Refresh();
         }
 
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            this.viewManager.OnMouseMove(e.X, e.Y);
-            this.Refresh();
-        }
-
-
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            this.viewManager.OnMouseDown(
-                e.Button != MouseButtons.Left,
-                e.X, e.Y,
-                ModifierKeys == Keys.Control, ModifierKeys == Keys.Shift);
-            this.Refresh();
-        }
-
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            this.viewManager.OnMouseUp(e.X, e.Y);
-            this.Refresh();
-        }
-
-
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
